@@ -1,7 +1,8 @@
 
 #include "../includes/Perception.hpp"
 
-void splitBySeed(const &size_t seed, const size_t &row)
+
+void splitBySeed(const size_t &seed, const size_t &row)
 {
     (void) seed;
     (void) row;
@@ -10,16 +11,12 @@ void splitBySeed(const &size_t seed, const size_t &row)
 
 void spitDataFiles(const string &input_file, const string &training_file, const string &testing_file, const size_t &seed)
 {
-    ifsteam input(input_file);
+    ifstream input(input_file);
     ofstream training(training_file);
     ofstream testing(testing_file);
-
     if (!input.is_open())
     {
         cerr << "Error opening input file" << endl;
         return;
     }
-    std::ofstream training(trainining_file, out);
-    std::ofstream testing(testing_file, out);
-
 }
