@@ -1,8 +1,8 @@
-
 #include "../includes/Perception.hpp"
 
 void splitDataFiles(const string &input_file, const string &training_file, const string &testing_file, const size_t &seed)
 {
+
     ifstream input(input_file);
     ofstream training(training_file);
     ofstream testing(testing_file);
@@ -18,3 +18,4 @@ void splitDataFiles(const string &input_file, const string &training_file, const
         else testing << line << endl;
     }
 }
+
