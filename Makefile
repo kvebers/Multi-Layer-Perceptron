@@ -1,4 +1,4 @@
-CC := g++
+CC := g++ -std=c++17
 CFLAGS := -Wall -Werror -Wextra
 OBJ_DIR := obj
 SRC_DIRS := parsing prediction training pipeline
