@@ -2,34 +2,44 @@
 
 int main()
 {
+    // data preprocessing
     size_t seed = 2002;
     string input_file = "data.csv";
-    string training_file = "training.csv";
-    string testing_file = "testing.csv";
+    string trainingFile = "training.csv";
+    string testingFile = "testing.csv";
     vector<size_t> params;
     size_t prediction = 1;
-    vector<pair<string, std::vector<float>>> training_data;
-    vector<pair<string, std::vector<float>>> testing_data;
-    params.reserve(30);
+    vector<pair<string, std::vector<float>>> trainingData;
+    vector<pair<string, std::vector<float>>> testingData;
     for (size_t i = 2; i < 32; i++)
     {
         params.push_back(i);
     }
-    splitDataFiles(input_file, training_file, testing_file, seed);
-    training_data = splitDataInVectors(training_file, params, prediction);
-    testing_data = splitDataInVectors(testing_file, params, prediction);
-    cout << testing_data.size() << endl;
-    cout << training_data.size() << endl;
-    for (size_t i = 0; i < testing_data.size(); i++)
-    {
-        cout << testing_data[i].first << " ";
-        for (size_t j = 0; j < testing_data[i].second.size(); j++)
-        {
-            cout << testing_data[i].second[j] << " ";
-        }
-        cout << endl;
-    }
-    // training(params);
+    params.reserve(30);
+
+    // create network
+
+    Network network;
+    InputLayer inputLayer(params.size(), "relu");
+    HiddenLayer hiddenLayer(10, "relu", "random");
+    HiddenLayer hiddenLayer2(10, "relu", "random");
+    OutputLayer outputLayer(1, "sigmoid", "random");
+
+    network.addLayer(inputLayer);
+    network.addLayer(hiddenLayer);
+    network.addLayer(hiddenLayer2);
+    network.addLayer(outputLayer);
+
+    // data spliting training / testing
+    splitDataFiles(input_file, trainingFile, testingFile, seed);
+    trainingData = splitDataInVectors(trainingFile, params, prediction);
+    testingData = splitDataInVectors(testingFile, params, prediction);
+
+    // training
+    training(trainingData, testingData, network);
+    
+
+    // testing
     // predict();
     return 0;
 }

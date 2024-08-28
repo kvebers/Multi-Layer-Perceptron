@@ -57,3 +57,13 @@ void splitDataFiles(const string &input_file, const string &training_file, const
         else testing << line << endl;
     }
 }
+
+
+size_t identityLabels(vector<pair<string, std::vector<float>>> &data)
+{
+    size_t count = 0;
+    map <string, int> uniqueLabels;
+    for (auto &pair : data) uniqueLabels[pair.first];
+    std::cout << "Unique labels: " << uniqueLabels.size() << std::endl;
+    return uniqueLabels.size();
+}

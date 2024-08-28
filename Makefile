@@ -4,7 +4,7 @@ OBJ_DIR := obj
 SRC_DIRS := parsing prediction training pipeline
 SRC_FILES := parsing/split.cpp pipeline/pipeline.cpp prediction/predict.cpp training/training.cpp
 OBJ_FILES := $(SRC_FILES:%.cpp=$(OBJ_DIR)/%.o)
-EXE := pipeline_exec
+EXE := exec
 $(EXE): $(OBJ_FILES)
 	$(CC) $(CFLAGS) $^ -o $@
 
