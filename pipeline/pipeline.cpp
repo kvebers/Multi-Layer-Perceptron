@@ -17,23 +17,22 @@ int main()
     }
     params.reserve(30);
 
+    // data spliting training / testing
+    splitDataFiles(input_file, trainingFile, testingFile, seed);
+    trainingData = splitDataInVectors(trainingFile, params, prediction);
+    testingData = splitDataInVectors(testingFile, params, prediction);
+
     // create network
 
     Network network;
     InputLayer inputLayer(params.size(), "relu");
     HiddenLayer hiddenLayer(10, "relu", "random");
     HiddenLayer hiddenLayer2(10, "relu", "random");
-    OutputLayer outputLayer(1, "sigmoid", "random");
-
+    OutputLayer outputLayer(identityLabels(trainingData), "sigmoid", "random");
     network.addLayer(inputLayer);
     network.addLayer(hiddenLayer);
     network.addLayer(hiddenLayer2);
     network.addLayer(outputLayer);
-
-    // data spliting training / testing
-    splitDataFiles(input_file, trainingFile, testingFile, seed);
-    trainingData = splitDataInVectors(trainingFile, params, prediction);
-    testingData = splitDataInVectors(testingFile, params, prediction);
 
     // training
     training(trainingData, testingData, network);

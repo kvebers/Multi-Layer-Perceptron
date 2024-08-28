@@ -30,6 +30,7 @@ class InputLayer : public Layer
 {
     public:
         InputLayer(size_t size, string activationFunction);
+        ~InputLayer();
     private:
         string layerName = "Input";
         size_t size;
@@ -41,6 +42,7 @@ class HiddenLayer : public Layer
 {
     public:
         HiddenLayer(size_t size, string activationFunction, string weightInitialization);
+        ~HiddenLayer();
     private:
         string layerName = "Hidden";
         size_t size;
@@ -52,6 +54,7 @@ class OutputLayer : public Layer
 {
     public:
         OutputLayer(size_t size, string activationFunction, string weightInitialization);
+        ~OutputLayer();
     private:
         string layerName = "Output";
         size_t size;
@@ -73,5 +76,6 @@ class Network
 void splitDataFiles(const string &input_file, const string &training_file, const string &testing_file, const size_t &seed);
 vector<pair<string, std::vector<float>>> splitDataInVectors(const string &file, std::vector<size_t> &params, const size_t &prediction);
 void training(vector<pair<string, std::vector<float>>> trainingData, vector<pair<string, std::vector<float>>>  testingData,  Network &network);
+size_t identityLabels(vector<pair<string, std::vector<float>>> &data);
 
 #endif
