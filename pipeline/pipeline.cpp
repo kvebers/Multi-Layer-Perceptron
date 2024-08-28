@@ -33,11 +33,8 @@ int main()
     network.addLayer(hiddenLayer);
     network.addLayer(hiddenLayer2);
     network.addLayer(outputLayer);
-
     // training
-    training(trainingData, testingData, network);
-    
-
+    training(trainingData, testingData, network);   
     // testing
     // predict();
     return 0;

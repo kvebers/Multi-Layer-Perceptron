@@ -24,6 +24,8 @@ class Layer
 {
     public:
         virtual ~Layer() = default;
+    private:
+        void InitializeWeights(string functionName);
 };
 
 class InputLayer : public Layer
