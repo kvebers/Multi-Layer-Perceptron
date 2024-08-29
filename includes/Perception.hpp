@@ -20,12 +20,21 @@ using std::vector;
 using std::pair;
 using std::map;
 
+using FunctionPointer = void(*)(size_t);
+
+void softmax(size_t i);
+void relu(size_t i);
+void sigmoid(size_t i);
+void tanh(size_t i);
+
+
 class Layer
 {
     public:
         virtual ~Layer() = default;
+        void InitializeWeights(size_t weights, string functionName);
     private:
-        void InitializeWeights(string functionName);
+        FunctionPointer returnFunctionToExecute(string &functionName);
 };
 
 class InputLayer : public Layer

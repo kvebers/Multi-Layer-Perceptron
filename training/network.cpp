@@ -2,7 +2,9 @@
 
 InputLayer::InputLayer(size_t size, string activationFunction) : size(size), activationFunction(activationFunction)
 {
+
 }
+
 InputLayer::~InputLayer()
 {
     (void) size;
@@ -10,6 +12,7 @@ InputLayer::~InputLayer()
 
 OutputLayer::OutputLayer(size_t size, string activationFunction, string weightInitialization) : size(size), activationFunction(activationFunction), weightInitialization(weightInitialization)
 {
+    InitializeWeights(size, weightInitialization);
 }
 
 OutputLayer::~OutputLayer()
@@ -19,6 +22,7 @@ OutputLayer::~OutputLayer()
 
 HiddenLayer::HiddenLayer(size_t size, string activationFunction, string weightInitialization) : size(size), activationFunction(activationFunction), weightInitialization(weightInitialization)
 {
+    InitializeWeights(size, weightInitialization);
 }
 
 HiddenLayer::~HiddenLayer()

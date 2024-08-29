@@ -23,11 +23,10 @@ int main()
     testingData = splitDataInVectors(testingFile, params, prediction);
 
     // create network
-
     Network network;
     InputLayer inputLayer(params.size(), "relu");
-    HiddenLayer hiddenLayer(10, "relu", "random");
-    HiddenLayer hiddenLayer2(10, "relu", "random");
+    HiddenLayer hiddenLayer(10, "softmax", "random");
+    HiddenLayer hiddenLayer2(10, "softmax", "random");
     OutputLayer outputLayer(identityLabels(trainingData), "sigmoid", "random");
     network.addLayer(inputLayer);
     network.addLayer(hiddenLayer);
