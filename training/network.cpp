@@ -48,6 +48,12 @@ void Network::addLayer(Layer &layer)
 
 void Network::CheckValidNetwork()
 {
+    if (layers.size() < 3)
+    {
+        cerr << "Network needs to have Input and Output Layers" << endl;
+        cerr << "and at least one Hidden Layer is Recomended So I will hard limit it" << endl;
+        exit(1);
+    }
     for (size_t i = 0; i < layers.size(); i++)
     {
         if (i == 0)

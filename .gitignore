@@ -1,5 +1,5 @@
 .vscode
 testing.csv
 training.csv
-pipeline_exec
 *.o
+exec
