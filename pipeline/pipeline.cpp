@@ -32,6 +32,7 @@ int main()
     network.addLayer(hiddenLayer);
     network.addLayer(hiddenLayer2);
     network.addLayer(outputLayer);
+    network.CheckValidNetwork();
     // training
     training(trainingData, testingData, network);   
     // testing

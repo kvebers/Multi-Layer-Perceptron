@@ -57,20 +57,21 @@ map<string, FunctionPointer> weightInitializationMap = {
 };
 
 
-FunctionPointer Layer::returnFunctionToExecute(std::string &functionName)
+
+
+FunctionPointer Layer::returnFunctionToExecute(std::string &functionName, map<string, FunctionPointer> &functionMap)
 {
-    if (weightInitializationMap.find(functionName) != weightInitializationMap.end())
-        return weightInitializationMap[functionName];
+    if (functionMap.find(functionName) != functionMap.end())
+        return functionMap[functionName];
     else
         return nullptr;
 }
 
 
 
-
 void Layer::InitializeWeights(size_t weights, string functionName)
 {
-    FunctionPointer function = returnFunctionToExecute(functionName);
+    FunctionPointer function = returnFunctionToExecute(functionName, weightInitializationMap);
     if (function == nullptr)
     {
         cerr << "Error: Activation function not found" << endl;

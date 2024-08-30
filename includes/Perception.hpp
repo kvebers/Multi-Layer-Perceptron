@@ -33,8 +33,9 @@ class Layer
     public:
         virtual ~Layer() = default;
         void InitializeWeights(size_t weights, string functionName);
+        string layerName;
     private:
-        FunctionPointer returnFunctionToExecute(string &functionName);
+        FunctionPointer returnFunctionToExecute(std::string &functionName, map<string, FunctionPointer> &functionMap);
 };
 
 class InputLayer : public Layer
@@ -43,7 +44,6 @@ class InputLayer : public Layer
         InputLayer(size_t size, string activationFunction);
         ~InputLayer();
     private:
-        string layerName = "Input";
         size_t size;
         string activationFunction;
 
@@ -55,7 +55,6 @@ class HiddenLayer : public Layer
         HiddenLayer(size_t size, string activationFunction, string weightInitialization);
         ~HiddenLayer();
     private:
-        string layerName = "Hidden";
         size_t size;
         string activationFunction;
         string weightInitialization;
@@ -66,8 +65,8 @@ class OutputLayer : public Layer
     public:
         OutputLayer(size_t size, string activationFunction, string weightInitialization);
         ~OutputLayer();
+
     private:
-        string layerName = "Output";
         size_t size;
         string activationFunction;
         string weightInitialization;
@@ -79,8 +78,10 @@ class Network
         Network();
         ~Network();
         void addLayer(Layer &layer);
+        void CheckValidNetwork();
     private:
         vector<Layer> layers;
+        
 };
 
 
