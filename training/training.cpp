@@ -1,5 +1,6 @@
 #include "../includes/Perception.hpp"
 
+
 void relu(size_t i)
 {
     std::cout << "relu" << std::endl;
@@ -24,113 +25,71 @@ void tanh(size_t i)
     (void) i;
 }
 
-void zeros(size_t i)
+
+// Initialization Functions
+float zeros(size_t i, size_t j)
 {
-    std::cout << "zeros" << std::endl;
     (void) i;
+    (void) j;
+    return 0.0;
 }
 
-void ones(size_t i)
+float ones(size_t i, size_t j)
 {
-    std::cout << "ones" << std::endl;
     (void) i;
+    (void) j;
+    return 1.0;
 }
 
-void random(size_t i)
+float random(size_t i, size_t j)
 {
-    std::cout << "random" << std::endl;
     (void) i;
+    (void) j;
+    float rand = random() % 200 / 100.0 - 1.0;
+    return rand;
+}
+
+// takes the number of input parameters to calculate the limit
+float he(size_t i, size_t j)
+{
+    (void) i;
+    float limit = sqrt(6.0f / j);
+    return (static_cast<float>(random()) / RAND_MAX) * 2 * limit - limit;
+}
+
+// normal distribution with mean 0 and std 1
+float heNormal(size_t i, size_t j)
+{
+    (void) i;
+    float stddev = sqrt(2.0f / j);
+    return stddev * ((static_cast<float>(random()) / RAND_MAX) * 2 - 1);
 }
 
 
-void xavier(size_t i)
-{
-    std::cout << "xavier" << std::endl;
-    (void) i;
-}
 
-void he(size_t i)
-{
-    std::cout << "he" << std::endl;
-    (void) i;
-}
-
-void lecun(size_t i)
-{
-    std::cout << "lecun" << std::endl;
-    (void) i;
-}
-
-void constant(size_t i)
-{
-    std::cout << "constant" << std::endl;
-    (void) i;
-}
-
-void orthognal(size_t i)
-{
-    std::cout << "orthognal" << std::endl;
-    (void) i;
-}
-
-void uniform(size_t i)
-{
-    std::cout << "uniform" << std::endl;
-    (void) i;
-}
-
-void normal(size_t i)
-{
-    std::cout << "normal" << std::endl;
-    (void) i;
-}
-
-void lecunNormal(size_t i)
-{
-    std::cout << "lecunNormal" << std::endl;
-    (void) i;
-}
-
-void heNormal(size_t i)
-{
-    std::cout << "heNormal" << std::endl;
-    (void) i;
-}
-
-void xavierNormal(size_t i)
-{
-    std::cout << "xavierNormal" << std::endl;
-    (void) i;
-}
-
-map<string, FunctionPointer> functionMap = {
+std::map<std::string, ActivationFunctionPointer> functionMap = {
     {"softmax", softmax},
     {"relu", relu},
     {"sigmoid", sigmoid},
     {"tanh", tanh}
 };
 
-map<string, FunctionPointer> weightInitializationMap = {
+std::map<std::string, WeightInitFunctionPointer> weightInitializationMap = {
     {"random", random},
     {"zeros", zeros},
     {"ones", ones},
-    {"xavier", xavier},
     {"he", he},
-    {"lecun", lecun},
-    {"constant", constant},
-    {"orthognal", orthognal},
-    {"uniform", uniform},
-    {"normal", normal},
-    {"lecunNormal", lecunNormal},
-    {"heNormal", heNormal},
-    {"xavierNormal", xavierNormal}
+    {"heNormal", heNormal}
 };
 
+ActivationFunctionPointer Layer::returnFunctionToExecute(string &functionName, map<string, ActivationFunctionPointer> &functionMap) {
+    if (functionMap.find(functionName) != functionMap.end())
+        return functionMap[functionName];
+    else
+        return nullptr;
+}
 
-
-
-FunctionPointer Layer::returnFunctionToExecute(std::string &functionName, map<string, FunctionPointer> &functionMap)
-{
+WeightInitFunctionPointer Layer::returnFunctionToExecute(string &functionName, map<string, WeightInitFunctionPointer> &functionMap) {
     if (functionMap.find(functionName) != functionMap.end())
         return functionMap[functionName];
     else
@@ -141,15 +100,16 @@ FunctionPointer Layer::returnFunctionToExecute(std::string &functionName, map<st
 
 void Layer::InitializeWeights(size_t weights, string functionName)
 {
-    FunctionPointer function = returnFunctionToExecute(functionName, weightInitializationMap);
-    if (function == nullptr)
+    WeightInitFunctionPointer initFunction = returnFunctionToExecute(functionName, weightInitializationMap);
+    if (initFunction == nullptr)
     {
         cerr << "Error: Activation function not found" << endl;
         exit(1);
     }
+    neurons.resize(weights);
     for (size_t i = 0; i < weights; i++)
     {
-        function(i);
+        std::cout << initFunction(i, weights) << std::endl;
     }
 }
 

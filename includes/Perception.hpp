@@ -20,26 +20,19 @@ using std::vector;
 using std::pair;
 using std::map;
 
-using FunctionPointer = void(*)(size_t);
+using ActivationFunctionPointer = void(*)(size_t);
+using WeightInitFunctionPointer = float(*)(size_t, size_t); 
 
 void softmax(size_t i);
 void relu(size_t i);
 void sigmoid(size_t i);
 void tanh(size_t i);
 
-void zeros(size_t i);
-void ones(size_t i);
-void random(size_t i);
-void xavier(size_t i);
-void he(size_t i);
-void lecun(size_t i);
-void constant(size_t i);
-void orthognal(size_t i);
-void uniform(size_t i);
-void normal(size_t i);
-void lecunNormal(size_t i);
-void heNormal(size_t i);
-void xavierNormal(size_t i);
+float zeros(size_t i, size_t j);
+float ones(size_t i, size_t j);
+float random(size_t i, size_t j);
+float he(size_t i, size_t j);
+float heNormal(size_t i, size_t j);
 
 class Layer
 {
@@ -47,8 +40,11 @@ class Layer
         virtual ~Layer() = default;
         void InitializeWeights(size_t weights, string functionName);
         string layerName;
+        vector<float> neurons;
     private:
-        FunctionPointer returnFunctionToExecute(std::string &functionName, map<string, FunctionPointer> &functionMap);
+        WeightInitFunctionPointer returnFunctionToExecute(std::string &functionName, std::map<std::string, WeightInitFunctionPointer> &functionMap);
+        ActivationFunctionPointer returnFunctionToExecute(std::string &functionName, std::map<std::string, ActivationFunctionPointer> &functionMap);
+
 };
 
 class InputLayer : public Layer
@@ -94,7 +90,6 @@ class Network
         void CheckValidNetwork();
     private:
         vector<Layer> layers;
-        
 };
 
 
