@@ -27,6 +27,19 @@ void relu(size_t i);
 void sigmoid(size_t i);
 void tanh(size_t i);
 
+void zeros(size_t i);
+void ones(size_t i);
+void random(size_t i);
+void xavier(size_t i);
+void he(size_t i);
+void lecun(size_t i);
+void constant(size_t i);
+void orthognal(size_t i);
+void uniform(size_t i);
+void normal(size_t i);
+void lecunNormal(size_t i);
+void heNormal(size_t i);
+void xavierNormal(size_t i);
 
 class Layer
 {

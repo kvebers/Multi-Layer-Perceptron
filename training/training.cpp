@@ -43,6 +43,66 @@ void random(size_t i)
 }
 
 
+void xavier(size_t i)
+{
+    std::cout << "xavier" << std::endl;
+    (void) i;
+}
+
+void he(size_t i)
+{
+    std::cout << "he" << std::endl;
+    (void) i;
+}
+
+void lecun(size_t i)
+{
+    std::cout << "lecun" << std::endl;
+    (void) i;
+}
+
+void constant(size_t i)
+{
+    std::cout << "constant" << std::endl;
+    (void) i;
+}
+
+void orthognal(size_t i)
+{
+    std::cout << "orthognal" << std::endl;
+    (void) i;
+}
+
+void uniform(size_t i)
+{
+    std::cout << "uniform" << std::endl;
+    (void) i;
+}
+
+void normal(size_t i)
+{
+    std::cout << "normal" << std::endl;
+    (void) i;
+}
+
+void lecunNormal(size_t i)
+{
+    std::cout << "lecunNormal" << std::endl;
+    (void) i;
+}
+
+void heNormal(size_t i)
+{
+    std::cout << "heNormal" << std::endl;
+    (void) i;
+}
+
+void xavierNormal(size_t i)
+{
+    std::cout << "xavierNormal" << std::endl;
+    (void) i;
+}
+
 map<string, FunctionPointer> functionMap = {
     {"softmax", softmax},
     {"relu", relu},
@@ -53,7 +113,17 @@ map<string, FunctionPointer> functionMap = {
 map<string, FunctionPointer> weightInitializationMap = {
     {"random", random},
     {"zeros", zeros},
-    {"ones", ones}
+    {"ones", ones},
+    {"xavier", xavier},
+    {"he", he},
+    {"lecun", lecun},
+    {"constant", constant},
+    {"orthognal", orthognal},
+    {"uniform", uniform},
+    {"normal", normal},
+    {"lecunNormal", lecunNormal},
+    {"heNormal", heNormal},
+    {"xavierNormal", xavierNormal}
 };
 
 
