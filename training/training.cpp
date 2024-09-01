@@ -1,28 +1,29 @@
 #include "../includes/Perception.hpp"
 
 
-#include <algorithm>
-
+// return value between 0 and infinity
 float relu(float x)
 {
-    return std::max(0.0, x);
+    return static_cast<float>(max(0.0, static_cast<double>(x)));
 }
 
 
 float softmax(float x)
 {
-    return 
+    return exp(x) / exp(x);
 }
 
 //s(x)= 1/(1+e^−x)
+// return  value between 0 and 1
 float sigmoid(float x)
 {
-    std::cout << "sigmoid" << std::endl;
+    return (1.0 / (1.0 + exp(-x)));
 }
 
-float tanh(float x)
+// return value between -1 and 1
+float myOwnTanh(float x)
 {
-    std::cout << "tanh" << std::endl;
+    return tanh(x);
 }
 
 

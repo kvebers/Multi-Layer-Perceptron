@@ -25,9 +25,9 @@ int main()
     // create network
     Network network;
     InputLayer inputLayer(params.size(), "relu");
-    HiddenLayer hiddenLayer(10, "softmax", "random");
-    HiddenLayer hiddenLayer2(10, "softmax", "random");
-    OutputLayer outputLayer(identityLabels(trainingData), "sigmoid", "random");
+    HiddenLayer hiddenLayer(10, "relu", "random");
+    HiddenLayer hiddenLayer2(10, "relu", "random");
+    OutputLayer outputLayer(2, "softmax", "random");
     network.addLayer(inputLayer);
     network.addLayer(hiddenLayer);
     network.addLayer(hiddenLayer2);

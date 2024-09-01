@@ -7,6 +7,7 @@
 #include <vector>
 #include <map>
 #include <cmath>
+#include <algorithm>
 
 
 using std::string;
@@ -27,7 +28,7 @@ using WeightInitFunctionPointer = float(*)(size_t, size_t);
 float relu(float x);
 float softmax(float x);
 float sigmoid(float x);
-float tanh(float x);
+float myOwnTanh(float x);
 
 float zeros(size_t i, size_t j);
 float ones(size_t i, size_t j);
