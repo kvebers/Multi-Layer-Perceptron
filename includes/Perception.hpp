@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <vector>
 #include <map>
+#include <cmath>
 
 
 using std::string;
@@ -19,14 +20,14 @@ using std::getline;
 using std::vector;
 using std::pair;
 using std::map;
+using std::max;
 
-using ActivationFunctionPointer = void(*)(size_t);
 using WeightInitFunctionPointer = float(*)(size_t, size_t); 
 
-void softmax(size_t i);
-void relu(size_t i);
-void sigmoid(size_t i);
-void tanh(size_t i);
+float relu(float x);
+float softmax(float x);
+float sigmoid(float x);
+float tanh(float x);
 
 float zeros(size_t i, size_t j);
 float ones(size_t i, size_t j);
@@ -43,8 +44,6 @@ class Layer
         vector<float> neurons;
     private:
         WeightInitFunctionPointer returnFunctionToExecute(std::string &functionName, std::map<std::string, WeightInitFunctionPointer> &functionMap);
-        ActivationFunctionPointer returnFunctionToExecute(std::string &functionName, std::map<std::string, ActivationFunctionPointer> &functionMap);
-
 };
 
 class InputLayer : public Layer

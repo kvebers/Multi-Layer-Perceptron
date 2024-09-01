@@ -1,28 +1,28 @@
 #include "../includes/Perception.hpp"
 
 
-void relu(size_t i)
+#include <algorithm>
+
+float relu(float x)
 {
-    std::cout << "relu" << std::endl;
-    (void) i;
+    return std::max(0.0, x);
 }
 
-void softmax(size_t i)
+
+float softmax(float x)
 {
-    std::cout << "softmax" << std::endl;
-    (void) i;
+    return 
 }
 
-void sigmoid(size_t i)
+//s(x)= 1/(1+e^−x)
+float sigmoid(float x)
 {
     std::cout << "sigmoid" << std::endl;
-    (void) i;
 }
 
-void tanh(size_t i)
+float tanh(float x)
 {
     std::cout << "tanh" << std::endl;
-    (void) i;
 }
 
 
@@ -34,6 +34,7 @@ float zeros(size_t i, size_t j)
     return 0.0;
 }
 
+// 1
 float ones(size_t i, size_t j)
 {
     (void) i;
@@ -65,16 +66,7 @@ float heNormal(size_t i, size_t j)
     return stddev * ((static_cast<float>(random()) / RAND_MAX) * 2 - 1);
 }
 
-
-
-std::map<std::string, ActivationFunctionPointer> functionMap = {
-    {"softmax", softmax},
-    {"relu", relu},
-    {"sigmoid", sigmoid},
-    {"tanh", tanh}
-};
-
-std::map<std::string, WeightInitFunctionPointer> weightInitializationMap = {
+map<string, WeightInitFunctionPointer> weightInitializationMap = {
     {"random", random},
     {"zeros", zeros},
     {"ones", ones},
@@ -82,18 +74,9 @@ std::map<std::string, WeightInitFunctionPointer> weightInitializationMap = {
     {"heNormal", heNormal}
 };
 
-ActivationFunctionPointer Layer::returnFunctionToExecute(string &functionName, map<string, ActivationFunctionPointer> &functionMap) {
-    if (functionMap.find(functionName) != functionMap.end())
-        return functionMap[functionName];
-    else
-        return nullptr;
-}
-
 WeightInitFunctionPointer Layer::returnFunctionToExecute(string &functionName, map<string, WeightInitFunctionPointer> &functionMap) {
-    if (functionMap.find(functionName) != functionMap.end())
-        return functionMap[functionName];
-    else
-        return nullptr;
+    if (functionMap.find(functionName) != functionMap.end()) return functionMap[functionName];
+    else return nullptr;
 }
 
 
@@ -107,17 +90,13 @@ void Layer::InitializeWeights(size_t weights, string functionName)
         exit(1);
     }
     neurons.resize(weights);
-    for (size_t i = 0; i < weights; i++)
-    {
-        std::cout << initFunction(i, weights) << std::endl;
-    }
+    for (size_t i = 0; i < weights; i++) neurons.push_back(initFunction(i, weights));
 }
-
-
 
 void training(vector<pair<string, std::vector<float>>> trainingData, vector<pair<string, std::vector<float>>>  testingData,  Network &network)
 {
     (void) trainingData;
     (void) testingData;
     (void) network;
+
 }
