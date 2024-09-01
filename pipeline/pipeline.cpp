@@ -34,7 +34,8 @@ int main()
     network.addLayer(outputLayer);
     network.CheckValidNetwork();
     // training
-    training(trainingData, testingData, network);   
+    training(trainingData, testingData, network, 100, 0.01);
+       
     // testing
     // predict();
     return 0;

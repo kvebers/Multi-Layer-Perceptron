@@ -108,7 +108,7 @@ ActivationFunctionPointer Layer::returnFunctionToExecute(string &functionName, m
 }
 
 
-void Layer::InitializeWeights(size_t weights, string functionName)
+void Layer::InitializeWeights(size_t neuronCount, string functionName, size_t previousLayerSize)
 {
     WeightInitFunctionPointer initFunction = returnFunctionToExecute(functionName, weightInitializationMap);
     if (initFunction == nullptr)
@@ -116,13 +116,28 @@ void Layer::InitializeWeights(size_t weights, string functionName)
         cerr << "Error: Activation function not found" << endl;
         exit(1);
     }
-    neurons.resize(weights);
-    for (size_t i = 0; i < weights; i++) neurons.push_back(initFunction(i, weights));
+    for (size_t i = 0; i < neuronCount; i++)
+    {
+        neurons.push_back(0.0);
+        vector<float> temp;
+        for (size_t j = 0; j < previousLayerSize; j++)
+        {
+            temp.push_back(initFunction(i, neuronCount));
+        }
+        weights.push_back(temp);
+    }
 }
 
-void training(vector<pair<string, std::vector<float>>> trainingData, vector<pair<string, std::vector<float>>>  testingData,  Network &network)
+void training(vector<pair<string, std::vector<float>>> trainingData, vector<pair<string, std::vector<float>>>  testingData,  Network &network, size_t epochs, float learningRate)
 {
-    (void) trainingData;
+    (void) learningRate;
+    for (size_t i = 0; i < epochs; i++)
+    {
+        for (size_t i = 0; i < trainingData.size(); i++)
+        {
+
+        }
+    }
     (void) testingData;
     (void) network;
 }

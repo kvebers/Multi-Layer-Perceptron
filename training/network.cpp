@@ -10,10 +10,10 @@ InputLayer::~InputLayer()
 	(void) size;
 }
 
-OutputLayer::OutputLayer(size_t size, string activationFunction, string weightInitialization) : size(size), activationFunction(activationFunction), weightInitialization(weightInitialization)
+OutputLayer::OutputLayer(size_t size, string activationFunction, string weightInitialization) : activationFunction(activationFunction), weightInitialization(weightInitialization)
 {
-	layerName = "Output";
-	InitializeWeights(size, weightInitialization);
+    layerName = "Output";
+	this->size = size;
 }
 
 OutputLayer::~OutputLayer()
@@ -21,10 +21,10 @@ OutputLayer::~OutputLayer()
 	(void) size;
 }
 
-HiddenLayer::HiddenLayer(size_t size, string activationFunction, string weightInitialization) : size(size), activationFunction(activationFunction), weightInitialization(weightInitialization)
+HiddenLayer::HiddenLayer(size_t size, string activationFunction, string weightInitialization) : activationFunction(activationFunction), weightInitialization(weightInitialization)
 {
 	layerName = "Hidden";
-	InitializeWeights(size, weightInitialization);
+	this->size = size;
 }
 
 HiddenLayer::~HiddenLayer()
