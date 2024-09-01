@@ -1,8 +1,17 @@
 #include "../includes/Perception.hpp"
 
-InputLayer::InputLayer(size_t size, string activationFunction) : size(size), activationFunction(activationFunction)
-{
-	layerName = "Input";
+
+extern map<string, WeightInitFunctionPointer> weightInitializationMap;
+extern map<string, ActivationFunctionPointer> activationFunctionMap;
+
+WeightInitFunctionPointer Layer::returnFunctionToExecute(string &functionName, map<string, WeightInitFunctionPointer> &functionMap) {
+    if (functionMap.find(functionName) != functionMap.end()) return functionMap[functionName];
+    else return nullptr;
+}
+
+ActivationFunctionPointer Layer::returnFunctionToExecute(string &functionName, map<string, ActivationFunctionPointer> &functionMap) {
+    if (functionMap.find(functionName) != functionMap.end()) return functionMap[functionName];
+    else return nullptr;
 }
 
 InputLayer::~InputLayer()
@@ -10,21 +19,27 @@ InputLayer::~InputLayer()
 	(void) size;
 }
 
-OutputLayer::OutputLayer(size_t size, string activationFunction, string weightInitialization) : activationFunction(activationFunction), weightInitialization(weightInitialization)
-{
-    layerName = "Output";
-	this->size = size;
-}
 
 OutputLayer::~OutputLayer()
 {
 	(void) size;
 }
 
-HiddenLayer::HiddenLayer(size_t size, string activationFunction, string weightInitialization) : activationFunction(activationFunction), weightInitialization(weightInitialization)
+InputLayer::InputLayer(size_t size, string activationFunction)
+    : activationFunction(activationFunction), size(size), layerName("Input")
+{
+	layerName = "Input";
+	this->size = size;
+}
+
+HiddenLayer::HiddenLayer(size_t size, string activationFunction, string weightInitialization): activationFunction(activationFunction), weightInitialization(weightInitialization), size(size), layerName("Hidden")
 {
 	layerName = "Hidden";
-	this->size = size;
+}
+
+OutputLayer::OutputLayer(size_t size, string activationFunction, string weightInitialization): activationFunction(activationFunction), weightInitialization(weightInitialization), size(size), layerName("Output")
+{
+	layerName = "Output";
 }
 
 HiddenLayer::~HiddenLayer()
@@ -40,11 +55,40 @@ Network::~Network()
 {
 }
 
-void Network::addLayer(Layer &layer)
+void Network::addLayer(std::unique_ptr<Layer> layer)
 {
-	layers.push_back(layer);
+	cout << layer->layerName << endl;
 }
 
+
+void Network::initializeNeuralNetworkWeights()
+{
+	for (size_t i = 1; i < layers.size(); i++)
+	{
+		WeightInitFunctionPointer initFunction = layers[i]->returnFunctionToExecute(layers[i]->weightInitialization, weightInitializationMap);
+		(void) initFunction;
+	}
+}
+
+void Layer::InitializeWeights(size_t neuronCount, string functionName, size_t previousLayerSize)
+{
+    WeightInitFunctionPointer initFunction = returnFunctionToExecute(functionName, weightInitializationMap);
+    if (initFunction == nullptr)
+    {
+        cerr << "Error: Activation function not found" << endl;
+        exit(1);
+    }
+    for (size_t i = 0; i < neuronCount; i++)
+    {
+        neurons.push_back(0.0);
+        vector<float> temp;
+        for (size_t j = 0; j < previousLayerSize; j++)
+        {
+            temp.push_back(initFunction(i, neuronCount));
+        }
+        weights.push_back(temp);
+    }
+}
 
 void Network::CheckValidNetwork()
 {
@@ -58,7 +102,8 @@ void Network::CheckValidNetwork()
 	{
 		if (i == 0)
 		{
-			if (layers[i].layerName != "Input")
+			cout << layers[i]->layerName << endl;
+			if (layers[i]->layerName != "Input")
 			{
 				cerr << "First layer must be an Input Layer" << endl;
 				exit(1);
@@ -66,7 +111,7 @@ void Network::CheckValidNetwork()
 		}
 		else if (i == layers.size() - 1)
 		{
-			if (layers[i].layerName != "Output")
+			if (layers[i]->layerName != "Output")
 			{
 				cerr << "Last layer must be an Output Layer" << endl;
 				exit(1);
@@ -74,7 +119,7 @@ void Network::CheckValidNetwork()
 		}
 		else
 		{
-			if (layers[i].layerName != "Hidden")
+			if (layers[i]->layerName != "Hidden")
 			{
 				cerr << "Middle layers must be Hidden Layers" << endl;
 				exit(1);

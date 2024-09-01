@@ -1,5 +1,8 @@
 #include "../includes/Perception.hpp"
 
+extern map<string, WeightInitFunctionPointer> weightInitializationMap;
+extern map<string, ActivationFunctionPointer> activationFunctionMap;
+
 vector<float> myOwnTanh(vector<float> x);
 
 // return value between 0 and infinity
@@ -82,62 +85,15 @@ float heNormal(size_t i, size_t j)
     return stddev * ((static_cast<float>(random()) / RAND_MAX) * 2 - 1);
 }
 
-map<string, WeightInitFunctionPointer> weightInitializationMap = {
-    {"random", random},
-    {"zeros", zeros},
-    {"ones", ones},
-    {"he", he},
-    {"heNormal", heNormal}
-};
-
-map<string, ActivationFunctionPointer> activationFunctionMap = {
-    {"relu", relu},
-    {"softmax", softmax},
-    {"sigmoid", sigmoid},
-    {"myOwnTanh", myOwnTanh}
-};
-
-WeightInitFunctionPointer Layer::returnFunctionToExecute(string &functionName, map<string, WeightInitFunctionPointer> &functionMap) {
-    if (functionMap.find(functionName) != functionMap.end()) return functionMap[functionName];
-    else return nullptr;
-}
-
-ActivationFunctionPointer Layer::returnFunctionToExecute(string &functionName, map<string, ActivationFunctionPointer> &functionMap) {
-    if (functionMap.find(functionName) != functionMap.end()) return functionMap[functionName];
-    else return nullptr;
-}
-
-
-void Layer::InitializeWeights(size_t neuronCount, string functionName, size_t previousLayerSize)
-{
-    WeightInitFunctionPointer initFunction = returnFunctionToExecute(functionName, weightInitializationMap);
-    if (initFunction == nullptr)
-    {
-        cerr << "Error: Activation function not found" << endl;
-        exit(1);
-    }
-    for (size_t i = 0; i < neuronCount; i++)
-    {
-        neurons.push_back(0.0);
-        vector<float> temp;
-        for (size_t j = 0; j < previousLayerSize; j++)
-        {
-            temp.push_back(initFunction(i, neuronCount));
-        }
-        weights.push_back(temp);
-    }
-}
-
 void training(vector<pair<string, std::vector<float>>> trainingData, vector<pair<string, std::vector<float>>>  testingData,  Network &network, size_t epochs, float learningRate)
 {
+    network.initializeNeuralNetworkWeights();
     (void) learningRate;
     for (size_t i = 0; i < epochs; i++)
     {
         for (size_t i = 0; i < trainingData.size(); i++)
         {
-
         }
     }
     (void) testingData;
-    (void) network;
 }
