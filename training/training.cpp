@@ -1,29 +1,44 @@
 #include "../includes/Perception.hpp"
 
+vector<float> myOwnTanh(vector<float> x);
 
 // return value between 0 and infinity
-float relu(float x)
+vector<float> relu(vector<float> x)
 {
-    return static_cast<float>(max(0.0, static_cast<double>(x)));
+    vector<float> outputs;
+    outputs.reserve(x.size());
+    for (size_t i = 0; i < x.size(); i++) outputs.push_back(static_cast<float>(max(0.0, static_cast<double>(x[i]))));
+    return outputs;
 }
 
 
-float softmax(float x)
+vector<float> softmax(vector<float> x)
 {
-    return exp(x) / exp(x);
+    vector<float> outputs;
+    outputs.reserve(x.size());
+    float sum = 0.0;
+    for (size_t i = 0; i < x.size(); i++) sum += exp(x[i]);
+    for (size_t i = 0; i < x.size(); i++) outputs.push_back(exp(x[i]) / sum);
+    return outputs;
 }
 
 //s(x)= 1/(1+e^−x)
 // return  value between 0 and 1
-float sigmoid(float x)
+vector<float> sigmoid(vector<float> x)
 {
-    return (1.0 / (1.0 + exp(-x)));
+    vector<float> outputs;
+    outputs.reserve(x.size());
+    for (size_t i = 0; i < x.size(); i++) outputs.push_back(1.0 / (1.0 + exp(-x[i])));
+    return outputs;
 }
 
 // return value between -1 and 1
-float myOwnTanh(float x)
+vector<float> myOwnTanh(vector<float> x)
 {
-    return tanh(x);
+    vector<float> outputs;
+    outputs.reserve(x.size());
+    for (size_t i = 0; i < x.size(); i++) outputs.push_back(tanh(x[i]));
+    return outputs;
 }
 
 
@@ -75,11 +90,22 @@ map<string, WeightInitFunctionPointer> weightInitializationMap = {
     {"heNormal", heNormal}
 };
 
+map<string, ActivationFunctionPointer> activationFunctionMap = {
+    {"relu", relu},
+    {"softmax", softmax},
+    {"sigmoid", sigmoid},
+    {"myOwnTanh", myOwnTanh}
+};
+
 WeightInitFunctionPointer Layer::returnFunctionToExecute(string &functionName, map<string, WeightInitFunctionPointer> &functionMap) {
     if (functionMap.find(functionName) != functionMap.end()) return functionMap[functionName];
     else return nullptr;
 }
 
+ActivationFunctionPointer Layer::returnFunctionToExecute(string &functionName, map<string, ActivationFunctionPointer> &functionMap) {
+    if (functionMap.find(functionName) != functionMap.end()) return functionMap[functionName];
+    else return nullptr;
+}
 
 
 void Layer::InitializeWeights(size_t weights, string functionName)
@@ -99,5 +125,4 @@ void training(vector<pair<string, std::vector<float>>> trainingData, vector<pair
     (void) trainingData;
     (void) testingData;
     (void) network;
-
 }

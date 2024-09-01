@@ -24,11 +24,12 @@ using std::map;
 using std::max;
 
 using WeightInitFunctionPointer = float(*)(size_t, size_t); 
+using ActivationFunctionPointer = vector<float>(*)(vector<float>);
 
-float relu(float x);
-float softmax(float x);
-float sigmoid(float x);
-float myOwnTanh(float x);
+vector<float> relu(vector<float> x);
+vector<float> softmax(vector<float> x);
+vector<float> sigmoid(vector<float> x);
+vector<float> myOwnTanh(vector<float> x);
 
 float zeros(size_t i, size_t j);
 float ones(size_t i, size_t j);
@@ -45,6 +46,7 @@ class Layer
         vector<float> neurons;
     private:
         WeightInitFunctionPointer returnFunctionToExecute(std::string &functionName, std::map<std::string, WeightInitFunctionPointer> &functionMap);
+        ActivationFunctionPointer Layer::returnFunctionToExecute(string &functionName, map<string, ActivationFunctionPointer> &functionMap);
 };
 
 class InputLayer : public Layer
