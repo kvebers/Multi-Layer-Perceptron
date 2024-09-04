@@ -46,49 +46,19 @@ float heNormal(size_t i, size_t j);
 class Layer
 {
     public:
-        virtual ~Layer() = default;
+        ~Layer();
+        Layer& operator=(const Layer& layer) = default;
+        Layer(const Layer& layer) = default;
+        Layer(string layerName, size_t size, string activationFunction, string weightInitialization);
         void InitializeWeights(size_t neuronCount, string functionName, size_t previousLayerSize);
         vector<float> neurons;
         vector<vector<float>> weights;
+        string layerName;
+        size_t size;
         string weightInitialization;
         string activationFunction;
-        size_t size;
-        string layerName;
         WeightInitFunctionPointer returnFunctionToExecute(std::string &functionName, std::map<std::string, WeightInitFunctionPointer> &functionMap);
         ActivationFunctionPointer returnFunctionToExecute(string &functionName, map<string, ActivationFunctionPointer> &functionMap);
-};
-
-class InputLayer : public Layer
-{
-    public:
-        InputLayer(size_t size, string activationFunction);
-        ~InputLayer();
-        string activationFunction;
-        size_t size;
-        string layerName;
-    
-};
-
-class HiddenLayer : public Layer
-{
-    public:
-        HiddenLayer(size_t size, string activationFunction, string weightInitialization);
-        ~HiddenLayer();
-        string activationFunction;
-        string weightInitialization;
-        size_t size;
-        string layerName;
-};
-
-class OutputLayer : public Layer
-{
-    public:
-        OutputLayer(size_t size, string activationFunction, string weightInitialization);
-        ~OutputLayer();
-        string activationFunction;
-        string weightInitialization;
-        size_t size;
-        string layerName;
 };
 
 class Network
@@ -96,7 +66,7 @@ class Network
     public:
         Network();
         ~Network();
-        void addLayer(std::unique_ptr<Layer> layer);
+        void addLayer(string layerName, size_t size, string activationFunction, string weightInitialization);
         void CheckValidNetwork();
         vector<unique_ptr<Layer>> layers;
         void initializeNeuralNetworkWeights();

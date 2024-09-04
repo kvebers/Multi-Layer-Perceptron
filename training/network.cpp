@@ -14,38 +14,17 @@ ActivationFunctionPointer Layer::returnFunctionToExecute(string &functionName, m
     else return nullptr;
 }
 
-InputLayer::~InputLayer()
+Layer::Layer(string layerName, size_t size, string activationFunction, string weightInitialization)
+    : layerName(layerName), size(size), weightInitialization(weightInitialization), activationFunction(activationFunction)
 {
 	(void) size;
 }
 
-
-OutputLayer::~OutputLayer()
+Layer::~Layer()
 {
 	(void) size;
 }
 
-InputLayer::InputLayer(size_t size, string activationFunction)
-    : activationFunction(activationFunction), size(size), layerName("Input")
-{
-	layerName = "Input";
-	this->size = size;
-}
-
-HiddenLayer::HiddenLayer(size_t size, string activationFunction, string weightInitialization): activationFunction(activationFunction), weightInitialization(weightInitialization), size(size), layerName("Hidden")
-{
-	layerName = "Hidden";
-}
-
-OutputLayer::OutputLayer(size_t size, string activationFunction, string weightInitialization): activationFunction(activationFunction), weightInitialization(weightInitialization), size(size), layerName("Output")
-{
-	layerName = "Output";
-}
-
-HiddenLayer::~HiddenLayer()
-{
-	(void) size;
-}
 
 Network::Network()
 {
@@ -55,9 +34,15 @@ Network::~Network()
 {
 }
 
-void Network::addLayer(std::unique_ptr<Layer> layer)
+void Network::addLayer(string layerName, size_t size, string activationFunction, string weightInitialization)
 {
-	cout << layer->layerName << endl;
+	if (layerName == "Input" || layerName == "Hidden" || layerName == "Output")
+        layers.push_back(std::make_unique<Layer>(layerName, size, activationFunction, weightInitialization));
+	else
+	{
+		cerr << "Invalid Layer Name" << endl;
+		exit(1);
+	}
 }
 
 
@@ -82,10 +67,7 @@ void Layer::InitializeWeights(size_t neuronCount, string functionName, size_t pr
     {
         neurons.push_back(0.0);
         vector<float> temp;
-        for (size_t j = 0; j < previousLayerSize; j++)
-        {
-            temp.push_back(initFunction(i, neuronCount));
-        }
+        for (size_t j = 0; j < previousLayerSize; j++) temp.push_back(initFunction(i, neuronCount));
         weights.push_back(temp);
     }
 }
@@ -102,7 +84,7 @@ void Network::CheckValidNetwork()
 	{
 		if (i == 0)
 		{
-			cout << layers[i]->layerName << endl;
+			cout << layers[i]->size << endl;
 			if (layers[i]->layerName != "Input")
 			{
 				cerr << "First layer must be an Input Layer" << endl;

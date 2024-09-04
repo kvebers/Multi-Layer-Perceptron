@@ -23,15 +23,11 @@ int main()
     testingData = splitDataInVectors(testingFile, params, prediction);
 
     // create network
-    auto inputLayer = std::make_unique<InputLayer>(10, "relu");
-    auto hiddenLayer = std::make_unique<HiddenLayer>(5, "sigmoid", "he");
-    auto hiddenLayer2 = std::make_unique<HiddenLayer>(5, "tanh", "he");
-    auto outputLayer = std::make_unique<OutputLayer>(2, "softmax", "random");
     Network network;
-    network.addLayer();
-    network.addLayer(move(hiddenLayer));
-    network.addLayer(move(hiddenLayer2));
-    network.addLayer(move(outputLayer));
+    network.addLayer("Input", params.size(), "relu", "zeros");
+    network.addLayer("Hidden", 5, "sigmoid", "he");
+    network.addLayer("Hidden", 5, "tanh", "he");
+    network.addLayer("Output", 2, "softmax", "random");
     network.CheckValidNetwork();
     // training
     training(trainingData, testingData, network, 100, 0.01);
