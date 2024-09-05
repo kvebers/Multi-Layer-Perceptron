@@ -25,10 +25,9 @@ int main()
     // create network
     Network network;
     network.addLayer("Input", params.size(), "relu", "zeros");
-    network.addLayer("Hidden", 5, "sigmoid", "he");
-    network.addLayer("Hidden", 5, "tanh", "he");
-    network.addLayer("Output", 2, "softmax", "random");
-    network.CheckValidNetwork();
+    network.addLayer("Hidden", 10, "sigmoid", "he");
+    network.addLayer("Hidden", 10, "tanh", "he");
+    network.addLayer("Output", identityLabels(trainingData), "softmax", "random");
     // training
     training(trainingData, testingData, network, 100, 0.01);
     

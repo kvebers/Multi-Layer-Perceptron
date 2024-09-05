@@ -87,12 +87,14 @@ float heNormal(size_t i, size_t j)
 
 void training(vector<pair<string, std::vector<float>>> trainingData, vector<pair<string, std::vector<float>>>  testingData,  Network &network, size_t epochs, float learningRate)
 {
+    network.CheckValidNetwork();
     network.initializeNeuralNetworkWeights();
     (void) learningRate;
     for (size_t i = 0; i < epochs; i++)
     {
         for (size_t i = 0; i < trainingData.size(); i++)
         {
+            
         }
     }
     (void) testingData;

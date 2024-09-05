@@ -57,7 +57,7 @@ class Layer
         size_t size;
         string weightInitialization;
         string activationFunction;
-        WeightInitFunctionPointer returnFunctionToExecute(std::string &functionName, std::map<std::string, WeightInitFunctionPointer> &functionMap);
+        WeightInitFunctionPointer returnFunctionToInit(std::string &functionName, std::map<std::string, WeightInitFunctionPointer> &functionMap);
         ActivationFunctionPointer returnFunctionToExecute(string &functionName, map<string, ActivationFunctionPointer> &functionMap);
 };
 
@@ -69,7 +69,10 @@ class Network
         void addLayer(string layerName, size_t size, string activationFunction, string weightInitialization);
         void CheckValidNetwork();
         vector<unique_ptr<Layer>> layers;
+        void predict();
         void initializeNeuralNetworkWeights();
+        void importNetwork(const string &file);
+        void exportNetwork(const string &file);
 };
 
 void splitDataFiles(const string &input_file, const string &training_file, const string &testing_file, const size_t &seed);
