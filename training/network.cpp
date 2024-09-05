@@ -64,6 +64,7 @@ void Network::initializeNeuralNetworkWeights()
 		cerr << "Network needs to have Input and Output Layers" << endl;
 		exit(1);
 	}
+	layers[0]->neurons.reserve(layers[0]->size);
     for (size_t i = 0; i < layers[0]->size; i++) {
 		layers[0]->neurons.push_back(0.0);
 		vector<float> temp;
@@ -92,9 +93,15 @@ void Layer::InitializeWeights(size_t neuronCount, string functionName, size_t pr
 }
 
 
-void Network::predict(pair<string, std::vector<float>> &input)
+void Network::backpropagation(vector<float> &output, string label)
 {
-	if (input.second.size() != layers[0]->neurons.size())  {cerr << "Input size does not match the input layer size" << endl; exit(1);}
+	(void) output;
+	(void) label;
+}
+
+vector<float> Network::predict(pair<string, std::vector<float>> &input)
+{
+	if (input.second.size() != layers[0]->size)  {cerr << "Input size does not match the input layer size" << endl; exit(1);}
 	for (size_t i = 0; i < input.second.size(); i++) layers[0]->neurons[i] = input.second[i];
 	for (size_t layer = 1; layer < layers.size(); layer++)
 	{
@@ -102,22 +109,15 @@ void Network::predict(pair<string, std::vector<float>> &input)
 		{
 			float sum = 0.0;
 			layers[layer]->neurons[neuron] = 0.0;
-			cout << layers[layer - 1]->neurons.size() << " " << layers[layer]->weights.size() << " " << layers[layer]->weights[neuron].size() <<endl;
 			for (size_t weight = 0; weight < layers[layer - 1]->size;  weight++)
 				sum += layers[layer - 1]->neurons[weight] * layers[layer]->weights[neuron][weight];
 			layers[layer]->neurons[neuron] = sum;
-			cout << layers[layer]->neurons[neuron] << endl;
 		}
 		ActivationFunctionPointer function = layers[layer]->returnFunctionToExecute(layers[layer]->activationFunction, activationFunctionMap);
-		if (function == nullptr)
-		{
-			cerr << "Error: Activation function not found " << layers[layer]->activationFunction <<endl;
-			exit(1);
-		}
-		layers[layer]->neurons = function(layers[layer]->neurons);
-		for (size_t i = 0; i < layers[layer]->neurons.size(); i++)
-			cout << layers[layer]->neurons[i] << endl;
+		if (function == nullptr) { cerr << "Error: Activation function not found " << layers[layer]->activationFunction <<endl; exit(1);}
+		layers[layer]->neurons = function(layers[layer]->neurons);	
 	}
+	return layers[layers.size() - 1]->neurons;
 }
 
 void Network::CheckValidNetwork()
