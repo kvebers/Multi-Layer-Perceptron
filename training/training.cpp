@@ -94,7 +94,7 @@ void training(vector<pair<string, std::vector<float>>> trainingData, vector<pair
     {
         for (size_t i = 0; i < trainingData.size(); i++)
         {
-            
+            network.predict(trainingData[i]);
         }
     }
     (void) testingData;

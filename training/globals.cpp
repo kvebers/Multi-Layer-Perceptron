@@ -12,5 +12,5 @@ map<string, ActivationFunctionPointer> activationFunctionMap = {
     {"relu", relu},
     {"softmax", softmax},
     {"sigmoid", sigmoid},
-    {"myOwnTanh", myOwnTanh}
+    {"tanh", myOwnTanh}
 };

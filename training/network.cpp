@@ -59,6 +59,15 @@ void Network::addLayer(string layerName, size_t size, string activationFunction,
 
 void Network::initializeNeuralNetworkWeights()
 {
+	if (layers.size() < 2)
+	{
+		cerr << "Network needs to have Input and Output Layers" << endl;
+		exit(1);
+	}
+    for (size_t i = 0; i < layers[0]->size; i++) {
+		layers[0]->neurons.push_back(0.0);
+		vector<float> temp;
+	}
 	for (size_t i = 1; i < layers.size(); i++)
 		layers[i]->InitializeWeights(layers[i]->size, layers[i]->weightInitialization, layers[i - 1]->size);
 }
@@ -71,21 +80,44 @@ void Layer::InitializeWeights(size_t neuronCount, string functionName, size_t pr
         cerr << "Error: Activation function not found" << endl;
         exit(1);
     }
+
     for (size_t i = 0; i < neuronCount; i++)
     {
         neurons.push_back(0.0);
         vector<float> temp;
+		temp.reserve(previousLayerSize);
         for (size_t j = 0; j < previousLayerSize; j++) temp.push_back(initFunction(i, neuronCount));
         weights.push_back(temp);
-		cout << weights[i].size() << endl;
-		cout << weights.size() << endl;
     }
 }
 
 
-void Network::predict()
+void Network::predict(pair<string, std::vector<float>> &input)
 {
-	
+	if (input.second.size() != layers[0]->neurons.size())  {cerr << "Input size does not match the input layer size" << endl; exit(1);}
+	for (size_t i = 0; i < input.second.size(); i++) layers[0]->neurons[i] = input.second[i];
+	for (size_t layer = 1; layer < layers.size(); layer++)
+	{
+		for (size_t neuron = 0; neuron < layers[layer]->size; neuron++)
+		{
+			float sum = 0.0;
+			layers[layer]->neurons[neuron] = 0.0;
+			cout << layers[layer - 1]->neurons.size() << " " << layers[layer]->weights.size() << " " << layers[layer]->weights[neuron].size() <<endl;
+			for (size_t weight = 0; weight < layers[layer - 1]->size;  weight++)
+				sum += layers[layer - 1]->neurons[weight] * layers[layer]->weights[neuron][weight];
+			layers[layer]->neurons[neuron] = sum;
+			cout << layers[layer]->neurons[neuron] << endl;
+		}
+		ActivationFunctionPointer function = layers[layer]->returnFunctionToExecute(layers[layer]->activationFunction, activationFunctionMap);
+		if (function == nullptr)
+		{
+			cerr << "Error: Activation function not found " << layers[layer]->activationFunction <<endl;
+			exit(1);
+		}
+		layers[layer]->neurons = function(layers[layer]->neurons);
+		for (size_t i = 0; i < layers[layer]->neurons.size(); i++)
+			cout << layers[layer]->neurons[i] << endl;
+	}
 }
 
 void Network::CheckValidNetwork()

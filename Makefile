@@ -2,7 +2,7 @@ CC := g++ -std=c++17
 CFLAGS := -Wall -Werror -Wextra -Wreorder-ctor
 OBJ_DIR := obj
 SRC_DIRS := parsing prediction training pipeline
-SRC_FILES := parsing/split.cpp pipeline/pipeline.cpp prediction/predict.cpp training/training.cpp training/network.cpp training/globals.cpp
+SRC_FILES := parsing/split.cpp pipeline/pipeline.cpp training/training.cpp training/network.cpp training/globals.cpp
 OBJ_FILES := $(SRC_FILES:%.cpp=$(OBJ_DIR)/%.o)
 EXE := exec
 $(EXE): $(OBJ_FILES)

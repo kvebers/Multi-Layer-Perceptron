@@ -69,7 +69,7 @@ class Network
         void addLayer(string layerName, size_t size, string activationFunction, string weightInitialization);
         void CheckValidNetwork();
         vector<unique_ptr<Layer>> layers;
-        void predict();
+        void predict(pair<string, std::vector<float>> &input);
         void initializeNeuralNetworkWeights();
         void importNetwork(const string &file);
         void exportNetwork(const string &file);
