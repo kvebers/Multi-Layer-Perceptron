@@ -89,12 +89,14 @@ void training(vector<pair<string, std::vector<float>>> trainingData, vector<pair
 {
     network.CheckValidNetwork();
     network.initializeNeuralNetworkWeights();
+    network.initializeLabels(trainingData);
     (void) learningRate;
     for (size_t i = 0; i < epochs; i++)
     {
         for (size_t i = 0; i < trainingData.size(); i++)
         {
             std::vector<float> temp = network.predict(trainingData[i]);
+            
             network.backpropagation(temp, trainingData[i].first);
         }
     }

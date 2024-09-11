@@ -81,10 +81,10 @@ void Layer::InitializeWeights(size_t neuronCount, string functionName, size_t pr
         cerr << "Error: Activation function not found" << endl;
         exit(1);
     }
-
     for (size_t i = 0; i < neuronCount; i++)
     {
-        neurons.push_back(0.0);
+        neurons.push_back(initFunction(i, neuronCount));
+		bias.push_back(initFunction(i, neuronCount));
         vector<float> temp;
 		temp.reserve(previousLayerSize);
         for (size_t j = 0; j < previousLayerSize; j++) temp.push_back(initFunction(i, neuronCount));
@@ -108,16 +108,28 @@ vector<float> Network::predict(pair<string, std::vector<float>> &input)
 		for (size_t neuron = 0; neuron < layers[layer]->size; neuron++)
 		{
 			float sum = 0.0;
-			layers[layer]->neurons[neuron] = 0.0;
+			layers[layer]->neurons[neuron] = layers[layer]->bias[neuron];
 			for (size_t weight = 0; weight < layers[layer - 1]->size;  weight++)
 				sum += layers[layer - 1]->neurons[weight] * layers[layer]->weights[neuron][weight];
-			layers[layer]->neurons[neuron] = sum;
+			layers[layer]->neurons[neuron] += sum;
 		}
 		ActivationFunctionPointer function = layers[layer]->returnFunctionToExecute(layers[layer]->activationFunction, activationFunctionMap);
 		if (function == nullptr) { cerr << "Error: Activation function not found " << layers[layer]->activationFunction <<endl; exit(1);}
 		layers[layer]->neurons = function(layers[layer]->neurons);	
 	}
 	return layers[layers.size() - 1]->neurons;
+}
+
+void Network::initializeLabels(vector<pair<string, std::vector<float>>> &data)
+{
+	if (data.size() == 0) {cerr << "Data is empty" << endl; exit(1);}
+	for (size_t i = 0; i < data.size(); i++)
+	{
+		bool found = false;
+		for (size_t j = 0; j < labels.size(); j++)
+			if (labels[j] == data[i].first) {found = true; break;}
+		if (!found) labels.push_back(data[i].first);
+	}
 }
 
 void Network::CheckValidNetwork()
