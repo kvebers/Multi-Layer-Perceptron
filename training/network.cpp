@@ -92,7 +92,7 @@ void Layer::InitializeWeights(size_t neuronCount, string functionName, size_t pr
     }
 }
 
-void network::backpropagation(vector<float> &output, string label)
+void Network::backpropagation(vector<float> &output, string label)
 {
 	(void) output;
 	(void) label;
