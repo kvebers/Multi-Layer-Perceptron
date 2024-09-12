@@ -25,6 +25,7 @@ using std::max;
 using std::unique_ptr;
 using std::move;
 using std::make_unique;
+using std::clamp;
 
 using WeightInitFunctionPointer = float(*)(size_t, size_t); 
 using ActivationFunctionPointer = vector<float>(*)(vector<float>);
@@ -75,8 +76,12 @@ class Network
         void initializeNeuralNetworkWeights();
         void importNetwork(const string &file);
         void exportNetwork(const string &file);
-        void backpropagation(vector<float> &output, string label);
         void initializeLabels(vector<pair<string, std::vector<float>>> &data);
+        string extractPrediction(vector<float> &output);
+        float calculateBinaryCrossEntropy(vector<float> &output, string label);
+        void retrain(vector<float> &output, string label);
+        void backpropagation(vector<float> &output, string label);
+        void gradientDescent(vector<float> &output, string label);
 };
 
 void splitDataFiles(const string &input_file, const string &training_file, const string &testing_file, const size_t &seed);

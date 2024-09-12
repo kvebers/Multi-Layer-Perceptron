@@ -92,11 +92,22 @@ void Layer::InitializeWeights(size_t neuronCount, string functionName, size_t pr
     }
 }
 
-
-void Network::backpropagation(vector<float> &output, string label)
+void network::backpropagation(vector<float> &output, string label)
 {
 	(void) output;
 	(void) label;
+}
+
+void Network::gradientDescent(vector<float> &output, string label)
+{
+	(void) output;
+	(void) label;
+}
+
+void Network::retrain(vector<float> &output, string label)
+{
+	gradientDescent(output, label);
+	backpropagation(output, label);
 }
 
 vector<float> Network::predict(pair<string, std::vector<float>> &input)
@@ -116,7 +127,7 @@ vector<float> Network::predict(pair<string, std::vector<float>> &input)
 		ActivationFunctionPointer function = layers[layer]->returnFunctionToExecute(layers[layer]->activationFunction, activationFunctionMap);
 		if (function == nullptr) { cerr << "Error: Activation function not found " << layers[layer]->activationFunction <<endl; exit(1);}
 		layers[layer]->neurons = function(layers[layer]->neurons);	
-	}
+	}	
 	return layers[layers.size() - 1]->neurons;
 }
 
@@ -130,6 +141,35 @@ void Network::initializeLabels(vector<pair<string, std::vector<float>>> &data)
 			if (labels[j] == data[i].first) {found = true; break;}
 		if (!found) labels.push_back(data[i].first);
 	}
+}
+
+string Network::extractPrediction(vector<float> &output)
+{
+	if (output.size() == 0) {cerr << "Output is empty" << endl; exit(1);}
+	size_t index = 0;
+	float max = output[index];
+	for (size_t i = 1; i < output.size(); i++)
+		if (output[i] > max) {max = output[i]; index = i;}
+	return labels[index];
+}
+
+
+float Network::calculateBinaryCrossEntropy(vector<float> &output, string label)
+{
+	if (output.size() == 0) {cerr << "Output is empty" << endl; exit(1);}
+	size_t labelIndex = 0;
+	for (size_t i = 1; i < output.size(); i++)
+		if (labels[i] == label) labelIndex = i;
+	size_t index = 0;
+	float max = output[index];
+	for (size_t i = 1; i < output.size(); i++)
+		if (output[i] > max) {max = output[i]; index = i;}
+
+	float falseProbability = clamp(output[index], 0.0001f, 0.9999f);
+	float probability = clamp(output[labelIndex], 0.0001f, 0.9999f);
+	float loss = -(log(probability) * 1.0f + log(falseProbability) * 0.0f); // Optimisation return -(log(probability));
+	// max output 4.56
+    return loss;
 }
 
 void Network::CheckValidNetwork()

@@ -91,14 +91,18 @@ void training(vector<pair<string, std::vector<float>>> trainingData, vector<pair
     network.initializeNeuralNetworkWeights();
     network.initializeLabels(trainingData);
     (void) learningRate;
-    for (size_t i = 0; i < epochs; i++)
+    for (size_t trainingCount = 0; trainingCount < epochs; trainingCount++)
     {
+        float deltaError = 0.0;
         for (size_t i = 0; i < trainingData.size(); i++)
         {
-            std::vector<float> temp = network.predict(trainingData[i]);
-            
+            vector<float> temp = network.predict(trainingData[i]);
+            string prediction = network.extractPrediction(temp);
+            float error = network.calculateBinaryCrossEntropy(temp, trainingData[i].first);
             network.backpropagation(temp, trainingData[i].first);
+            deltaError += error;
         }
+        deltaError /= trainingData.size();
     }
     (void) testingData;
 }
