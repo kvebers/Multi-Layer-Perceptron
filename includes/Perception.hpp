@@ -51,8 +51,6 @@ float he(size_t i, size_t j);
 float heNormal(size_t i, size_t j);
 
 
-
-
 class Layer
 {
     public:
@@ -95,7 +93,7 @@ class Network
         void applyGradients(float &learningRate);
 };
 
-void splitDataFiles(const string &input_file, const string &training_file, const string &testing_file, const size_t &seed);
+void splitDataFiles(const string &inputFile, const string &trainingFile, const string &testingFile, const size_t &seed);
 vector<pair<string, std::vector<float>>> splitDataInVectors(const string &file, std::vector<size_t> &params, const size_t &prediction);
 void training(vector<pair<string, std::vector<float>>> trainingData, vector<pair<string, std::vector<float>>>  testingData,  Network &network, size_t epochs, float learningRate);
 size_t identityLabels(vector<pair<string, std::vector<float>>> &data);

@@ -40,11 +40,11 @@ vector<pair<string, std::vector<float>>> splitDataInVectors(const string &file, 
 }
 
 
-void splitDataFiles(const string &input_file, const string &training_file, const string &testing_file, const size_t &seed)
+void splitDataFiles(const string &inputFile, const string &trainingFile, const string &testingFile, const size_t &seed)
 {
-    ifstream input(input_file);
-    ofstream training(training_file);
-    ofstream testing(testing_file);
+    ifstream input(inputFile);
+    ofstream training(trainingFile);
+    ofstream testing(testingFile);
     if (!input.is_open())
     {
         cerr << "Error opening input file" << endl;

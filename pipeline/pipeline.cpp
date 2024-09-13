@@ -26,7 +26,7 @@ int main()
     network.addLayer("Hidden", 10, "tanh", "he");
     network.addLayer("Output", identityLabels(trainingData), "softmax", "random");
     // training
-    training(trainingData, testingData, network, 100, 0.0001);
+    training(trainingData, testingData, network, 100, 0.01);
     
     // testing
     // predict();

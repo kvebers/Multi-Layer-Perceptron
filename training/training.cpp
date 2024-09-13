@@ -150,6 +150,7 @@ void training(vector<pair<string, std::vector<float>>> trainingData, vector<pair
             float loss = network.calculateBinaryCrossEntropy(predictinFloats, trainingData[i].first);
             vector<float> target = network.createTargetVector(trainingData[i].first);
             network.backpropagation(predictinFloats, target);
+            if (i % 20) network.applyGradients(learningRate);
             deltaError += loss;
             if (prediction == trainingData[i].first) correct++;
         }
@@ -162,9 +163,10 @@ void training(vector<pair<string, std::vector<float>>> trainingData, vector<pair
             string prediction = network.extractPrediction(predictinFloats);
             if (prediction == testingData[i].first) correctTests++;
         }
+
         cout << "Ecoch: " <<trainingCount << " Loss: " << deltaError << " Accuracy: " << correct / trainingData.size() << " Test count: " <<correct << "/" << trainingData.size();
         cout << " Testing Data: " << correctTests / testingData.size() <<  " Test count: " << correctTests << "/" << testingData.size() << endl;
-        if (correctTests / testingData.size() > 0.9 && correct / trainingData.size() > 0.) break;
+        if (correctTests / testingData.size() > 0.90 && correct / trainingData.size() > 0.90) break;
     }
     (void) testingData;
 }
