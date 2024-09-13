@@ -14,3 +14,10 @@ map<string, ActivationFunctionPointer> activationFunctionMap = {
     {"sigmoid", sigmoid},
     {"tanh", myOwnTanh}
 };
+
+map<string, DerivativeActivationFunctionPointer> derivativeActivationFunctionMap = {
+    {"relu", derivativeRelu},
+    {"softmax", derivativeSoftmax},
+    {"sigmoid", derivativeSigmoid},
+    {"tanh", derivativeMyOwnTanh}
+};

@@ -11,11 +11,8 @@ int main()
     size_t prediction = 1;
     vector<pair<string, std::vector<float>>> trainingData;
     vector<pair<string, std::vector<float>>> testingData;
-    for (size_t i = 2; i < 32; i++)
-    {
-        params.push_back(i);
-    }
     params.reserve(30);
+    for (size_t i = 2; i < 32; i++) params.push_back(i);
 
     // data spliting training / testing
     splitDataFiles(input_file, trainingFile, testingFile, seed);
@@ -29,7 +26,7 @@ int main()
     network.addLayer("Hidden", 10, "tanh", "he");
     network.addLayer("Output", identityLabels(trainingData), "softmax", "random");
     // training
-    training(trainingData, testingData, network, 100, 0.01);
+    training(trainingData, testingData, network, 100, 0.0001);
     
     // testing
     // predict();

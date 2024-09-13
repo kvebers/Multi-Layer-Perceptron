@@ -3,6 +3,7 @@
 
 extern map<string, WeightInitFunctionPointer> weightInitializationMap;
 extern map<string, ActivationFunctionPointer> activationFunctionMap;
+extern map<string, DerivativeActivationFunctionPointer> derivativeActivationFunctionMap;
 
 WeightInitFunctionPointer Layer::returnFunctionToInit(string &functionName, map<string, WeightInitFunctionPointer> &functionMap) {
     if (functionMap.find(functionName) != functionMap.end()) return functionMap[functionName];
@@ -83,31 +84,72 @@ void Layer::InitializeWeights(size_t neuronCount, string functionName, size_t pr
     }
     for (size_t i = 0; i < neuronCount; i++)
     {
+		gradientNeuronBias.push_back(0.0);
         neurons.push_back(initFunction(i, neuronCount));
 		bias.push_back(initFunction(i, neuronCount));
         vector<float> temp;
 		temp.reserve(previousLayerSize);
-        for (size_t j = 0; j < previousLayerSize; j++) temp.push_back(initFunction(i, neuronCount));
+		vector<float> tempBias;
+		tempBias.reserve(previousLayerSize);
+        for (size_t j = 0; j < previousLayerSize; j++)
+		{
+			temp.push_back(initFunction(i, neuronCount));
+			tempBias.push_back(0.0);
+		}
         weights.push_back(temp);
+		gradientWeights.push_back(tempBias);
     }
 }
 
-void Network::backpropagation(vector<float> &output, string label)
+vector<float> Network::createTargetVector(string &label)
 {
-	(void) output;
-	(void) label;
+	vector<float> target;
+	for (size_t i = 0; i < labels.size(); i++)
+	{
+		if (labels[i] == label) target.push_back(1.0);
+		else target.push_back(0.0);
+	}
+	return target;
 }
 
-void Network::gradientDescent(vector<float> &output, string label)
+void Network::applyGradients(float &learningRate)
 {
-	(void) output;
-	(void) label;
+	for (size_t layer = 1; layer < layers.size(); layer++)
+	{
+		for (size_t neuron = 0; neuron < layers[layer]->neurons.size(); neuron++)
+		{
+			for (size_t weight = 0; weight < layers[layer - 1]->size;  weight++)
+			{
+				layers[layer]->weights[neuron][weight] -= layers[layer]->gradientWeights[neuron][weight] * learningRate;
+				layers[layer]->gradientWeights[neuron][weight] = 0.0;
+			}
+			layers[layer]->bias[neuron] -= layers[layer]->gradientNeuronBias[neuron] * learningRate;
+			layers[layer]->gradientNeuronBias[neuron] = 0.0;
+		}
+	}
 }
 
-void Network::retrain(vector<float> &output, string label)
-{
-	gradientDescent(output, label);
-	backpropagation(output, label);
+
+
+void Network::backpropagation(vector<float> &output, vector<float> &target) {
+    vector<float> delta(layers.back()->neurons.size());
+    for (size_t i = 0; i < layers.back()->neurons.size(); i++)
+        delta[i] = output[i] - target[i];
+    for (size_t layer = layers.size() - 1; layer > 0; layer--) {
+        vector<float> newDelta(layers[layer - 1]->neurons.size());
+        for (size_t prevNeuron = 0; prevNeuron < layers[layer - 1]->neurons.size(); prevNeuron++) {
+            float error = 0.0;
+            for (size_t neuron = 0; neuron < layers[layer]->neurons.size(); ++neuron) {
+                float weightGradient = delta[neuron] * layers[layer - 1]->neurons[prevNeuron];
+                layers[layer]->gradientWeights[neuron][prevNeuron] += weightGradient;
+                error += delta[neuron] * layers[layer]->weights[neuron][prevNeuron];
+            }
+            newDelta[prevNeuron] = error * derivativeActivationFunctionMap[layers[layer - 1]->activationFunction](layers[layer - 1]->neurons)[prevNeuron];
+        }
+        delta = newDelta;
+        for (size_t neuron = 0; neuron < layers[layer]->neurons.size(); neuron++)
+            layers[layer]->gradientNeuronBias[neuron] += delta[neuron];
+    }
 }
 
 vector<float> Network::predict(pair<string, std::vector<float>> &input)
@@ -153,7 +195,6 @@ string Network::extractPrediction(vector<float> &output)
 	return labels[index];
 }
 
-
 float Network::calculateBinaryCrossEntropy(vector<float> &output, string label)
 {
 	if (output.size() == 0) {cerr << "Output is empty" << endl; exit(1);}
@@ -162,9 +203,8 @@ float Network::calculateBinaryCrossEntropy(vector<float> &output, string label)
 		if (labels[i] == label) labelIndex = i;
 	size_t index = 0;
 	float max = output[index];
-	for (size_t i = 1; i < output.size(); i++)
+	for (size_t i = 1; i < output.size(); i++)  
 		if (output[i] > max) {max = output[i]; index = i;}
-
 	float falseProbability = clamp(output[index], 0.0001f, 0.9999f);
 	float probability = clamp(output[labelIndex], 0.0001f, 0.9999f);
 	float loss = -(log(probability) * 1.0f + log(falseProbability) * 0.0f); // Optimisation return -(log(probability));

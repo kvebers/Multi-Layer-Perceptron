@@ -44,6 +44,51 @@ vector<float> myOwnTanh(vector<float> x)
     return outputs;
 }
 
+//derivativeRelu(x)[i] = 1 if x[i] > 0 else 0
+vector<float> derivativeRelu(vector<float> x)
+{
+    vector<float> outputs;
+    outputs.reserve(x.size());
+    for (size_t i = 0; i < x.size(); i++)
+    {
+        if (x[i] > 0) outputs.push_back(1);
+        else outputs.push_back(0);
+    }
+    return outputs;
+}
+
+//derivativeSoftmax(x)[i] = softmax(x)[i] * (1 - softmax(x)[i])
+vector<float> derivativeSoftmax(vector<float> x)
+{
+    vector<float> outputs;
+    outputs.reserve(x.size());
+    for (size_t i = 0; i < x.size(); i++)
+    {
+        float sum = 0.0;
+        for (size_t j = 0; j < x.size(); j++) sum += exp(x[j]);
+        outputs.push_back(exp(x[i]) * (sum - exp(x[i])) / (sum * sum));
+    }
+    return outputs;
+}
+ 
+//derivativeSigmoid(x) = sigmoid(x) * (1 - sigmoid(x))
+vector<float> derivativeSigmoid(vector<float> x)
+{
+    vector<float> outputs;
+    outputs.reserve(x.size());
+    for (size_t i = 0; i < x.size(); i++) outputs.push_back(x[i] * (1 - x[i]));
+    return outputs;
+}
+
+
+// Tanh(x) = 1 - tanh(x)^2
+vector<float> derivativeMyOwnTanh(vector<float> x)
+{
+    vector<float> outputs;
+    outputs.reserve(x.size());
+    for (size_t i = 0; i < x.size(); i++) outputs.push_back(1 - x[i] * x[i]);
+    return outputs;
+}
 
 // Initialization Functions
 float zeros(size_t i, size_t j)
@@ -94,15 +139,31 @@ void training(vector<pair<string, std::vector<float>>> trainingData, vector<pair
     for (size_t trainingCount = 0; trainingCount < epochs; trainingCount++)
     {
         float deltaError = 0.0;
+        float correct = 0;
+        random_device rd;
+        mt19937 gen(rd());
+        shuffle(trainingData.begin(), trainingData.end(), gen);
         for (size_t i = 0; i < trainingData.size(); i++)
         {
-            vector<float> temp = network.predict(trainingData[i]);
-            string prediction = network.extractPrediction(temp);
-            float error = network.calculateBinaryCrossEntropy(temp, trainingData[i].first);
-            network.backpropagation(temp, trainingData[i].first);
-            deltaError += error;
+            vector<float> predictinFloats = network.predict(trainingData[i]);
+            string prediction = network.extractPrediction(predictinFloats);
+            float loss = network.calculateBinaryCrossEntropy(predictinFloats, trainingData[i].first);
+            vector<float> target = network.createTargetVector(trainingData[i].first);
+            network.backpropagation(predictinFloats, target);
+            deltaError += loss;
+            if (prediction == trainingData[i].first) correct++;
         }
+        network.applyGradients(learningRate);
         deltaError /= trainingData.size();
+        float correctTests = 0;
+        for (size_t i = 0; i < testingData.size(); i++)
+        {
+            vector<float> predictinFloats = network.predict(testingData[i]);
+            string prediction = network.extractPrediction(predictinFloats);
+            if (prediction == testingData[i].first) correctTests++;
+        }
+        cout << "Ecoch: " <<trainingCount << " Loss: " << deltaError << " Accuracy: " << correct / trainingData.size() << " Test count: " <<correct << "/" << trainingData.size();
+        cout << " Testing Data: " << correctTests / testingData.size() <<  " Test count: " << correctTests << "/" << testingData.size() << endl;
     }
     (void) testingData;
 }

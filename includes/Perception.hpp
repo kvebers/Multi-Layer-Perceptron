@@ -8,6 +8,7 @@
 #include <map>
 #include <cmath>
 #include <algorithm>
+#include <random>
 
 
 using std::string;
@@ -26,14 +27,22 @@ using std::unique_ptr;
 using std::move;
 using std::make_unique;
 using std::clamp;
+using std::shuffle;
+using std::mt19937;
+using std::random_device;
 
 using WeightInitFunctionPointer = float(*)(size_t, size_t); 
 using ActivationFunctionPointer = vector<float>(*)(vector<float>);
+using DerivativeActivationFunctionPointer = vector<float>(*)(vector<float>);
 
 vector<float> relu(vector<float> x);
 vector<float> softmax(vector<float> x);
 vector<float> sigmoid(vector<float> x);
 vector<float> myOwnTanh(vector<float> x);
+vector<float> derivativeRelu(vector<float> x);
+vector<float> derivativeSoftmax(vector<float> x);
+vector<float> derivativeSigmoid(vector<float> x);
+vector<float> derivativeMyOwnTanh(vector<float> x);
 
 float zeros(size_t i, size_t j);
 float ones(size_t i, size_t j);
@@ -55,6 +64,8 @@ class Layer
         vector<float> neurons;
         vector<float> bias;
         vector<vector<float>> weights;
+        vector<vector<float>> gradientWeights;
+        vector<float> gradientNeuronBias;
         string layerName;
         size_t size;
         string weightInitialization;
@@ -79,9 +90,9 @@ class Network
         void initializeLabels(vector<pair<string, std::vector<float>>> &data);
         string extractPrediction(vector<float> &output);
         float calculateBinaryCrossEntropy(vector<float> &output, string label);
-        void retrain(vector<float> &output, string label);
-        void backpropagation(vector<float> &output, string label);
-        void gradientDescent(vector<float> &output, string label);
+        void backpropagation(vector<float> &output, vector<float> &target);
+        vector<float> createTargetVector(string &label);
+        void applyGradients(float &learningRate);
 };
 
 void splitDataFiles(const string &input_file, const string &training_file, const string &testing_file, const size_t &seed);
