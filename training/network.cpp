@@ -114,19 +114,29 @@ vector<float> Network::createTargetVector(string &label)
 
 void Network::applyGradients(float &learningRate)
 {
-	for (size_t layer = 1; layer < layers.size(); layer++)
-	{
-		for (size_t neuron = 0; neuron < layers[layer]->neurons.size(); neuron++)
-		{
-			for (size_t weight = 0; weight < layers[layer - 1]->size;  weight++)
-			{
-				layers[layer]->weights[neuron][weight] -= layers[layer]->gradientWeights[neuron][weight] * learningRate;
-				layers[layer]->gradientWeights[neuron][weight] = 0.0;
-			}
-			layers[layer]->bias[neuron] -= layers[layer]->gradientNeuronBias[neuron] * learningRate;
-			layers[layer]->gradientNeuronBias[neuron] = 0.0;
-		}
-	}
+	float clip = 1.0;
+    for (size_t layer = 1; layer < layers.size(); layer++) {
+        for (size_t neuron = 0; neuron < layers[layer]->neurons.size(); neuron++) {
+            float gradientNorm = 0.0;
+            for (size_t weight = 0; weight < layers[layer - 1]->size; weight++)
+                gradientNorm += layers[layer]->gradientWeights[neuron][weight] * layers[layer]->gradientWeights[neuron][weight];
+            gradientNorm = sqrt(gradientNorm);
+            if (gradientNorm > clip) {
+                for (size_t weight = 0; weight < layers[layer - 1]->size; weight++) {
+					if (gradientNorm < 0.0) gradientNorm = 0.0001;
+                    layers[layer]->gradientWeights[neuron][weight] *= clip / gradientNorm;
+                    if (layers[layer]->gradientWeights[neuron][weight] * layers[layer]->gradientWeights[neuron][weight] < 0)
+                        layers[layer]->gradientWeights[neuron][weight] *= -1;
+                }
+            }
+            for (size_t weight = 0; weight < layers[layer - 1]->size; weight++) {
+                layers[layer]->weights[neuron][weight] -= layers[layer]->gradientWeights[neuron][weight] * learningRate;
+                layers[layer]->gradientWeights[neuron][weight] = 0.0;
+            }
+            layers[layer]->bias[neuron] -= layers[layer]->gradientNeuronBias[neuron] * learningRate;
+            layers[layer]->gradientNeuronBias[neuron] = 0.0;
+        }
+    }
 }
 
 
