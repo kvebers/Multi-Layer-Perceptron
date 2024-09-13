@@ -3,7 +3,7 @@
 extern map<string, WeightInitFunctionPointer> weightInitializationMap;
 extern map<string, ActivationFunctionPointer> activationFunctionMap;
 
-vector<float> myOwnTanh(vector<float> x);
+
 
 // return value between 0 and infinity
 vector<float> relu(vector<float> x)
@@ -164,6 +164,7 @@ void training(vector<pair<string, std::vector<float>>> trainingData, vector<pair
         }
         cout << "Ecoch: " <<trainingCount << " Loss: " << deltaError << " Accuracy: " << correct / trainingData.size() << " Test count: " <<correct << "/" << trainingData.size();
         cout << " Testing Data: " << correctTests / testingData.size() <<  " Test count: " << correctTests << "/" << testingData.size() << endl;
+        if (correctTests / testingData.size() > 0.9 && correct / trainingData.size() > 0.) break;
     }
     (void) testingData;
 }
