@@ -135,7 +135,7 @@ void training(vector<pair<string, std::vector<float>>> trainingData, vector<pair
     network.CheckValidNetwork();
     network.initializeNeuralNetworkWeights();
     network.initializeLabels(trainingData);
-    float earlyStopping = 0.88;
+    float earlyStopping = 0.9;
     ofstream training("./visuals/training.csv");
     training << "Epoch,Loss,Accuracy,Test Accuracy"<< endl;
     for (size_t trainingCount = 0; trainingCount < epochs; trainingCount++)

@@ -142,7 +142,6 @@ void Network::backpropagation(vector<float> &output, vector<float> &target) {
 			vector<float> temp = function(layers[layer - 1]->neurons);
             for (size_t neuron = 0; neuron < layers[layer]->neurons.size(); neuron++) {
             	float weightGradient = delta[neuron] * layers[layer - 1]->neurons[prevNeuron];
-				cout << weightGradient << endl;
                 layers[layer]->gradientWeights[neuron][prevNeuron] += weightGradient * temp[prevNeuron];
                 error += delta[neuron] * layers[layer]->weights[neuron][prevNeuron];
             }
