@@ -130,7 +130,6 @@ void Network::applyGradients(float &learningRate)
 }
 
 
-
 void Network::backpropagation(vector<float> &output, vector<float> &target) {
     vector<float> delta(layers.back()->neurons.size());
     for (size_t i = 0; i < layers.back()->neurons.size(); i++)
@@ -140,12 +139,14 @@ void Network::backpropagation(vector<float> &output, vector<float> &target) {
         for (size_t prevNeuron = 0; prevNeuron < layers[layer - 1]->neurons.size(); prevNeuron++) {
             float error = 0.0;
 			DerivativeActivationFunctionPointer function = derivativeActivationFunctionMap[layers[layer - 1]->activationFunction];
+			vector<float> temp = function(layers[layer - 1]->neurons);
             for (size_t neuron = 0; neuron < layers[layer]->neurons.size(); neuron++) {
             	float weightGradient = delta[neuron] * layers[layer - 1]->neurons[prevNeuron];
-                layers[layer]->gradientWeights[neuron][prevNeuron] += weightGradient * function(layers[layer - 1]->neurons)[prevNeuron];
+				cout << weightGradient << endl;
+                layers[layer]->gradientWeights[neuron][prevNeuron] += weightGradient * temp[prevNeuron];
                 error += delta[neuron] * layers[layer]->weights[neuron][prevNeuron];
             }
-            newDelta[prevNeuron] = error * function(layers[layer - 1]->neurons)[prevNeuron];
+            newDelta[prevNeuron] = error * temp[prevNeuron];
         }
         delta = newDelta;
         for (size_t neuron = 0; neuron < layers[layer]->neurons.size(); neuron++)
