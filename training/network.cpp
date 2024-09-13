@@ -139,12 +139,13 @@ void Network::backpropagation(vector<float> &output, vector<float> &target) {
         vector<float> newDelta(layers[layer - 1]->neurons.size());
         for (size_t prevNeuron = 0; prevNeuron < layers[layer - 1]->neurons.size(); prevNeuron++) {
             float error = 0.0;
-            for (size_t neuron = 0; neuron < layers[layer]->neurons.size(); ++neuron) {
-                float weightGradient = delta[neuron] * layers[layer - 1]->neurons[prevNeuron];
-                layers[layer]->gradientWeights[neuron][prevNeuron] += weightGradient;
+			DerivativeActivationFunctionPointer function = derivativeActivationFunctionMap[layers[layer - 1]->activationFunction];
+            for (size_t neuron = 0; neuron < layers[layer]->neurons.size(); neuron++) {
+            	float weightGradient = delta[neuron] * layers[layer - 1]->neurons[prevNeuron];
+                layers[layer]->gradientWeights[neuron][prevNeuron] += weightGradient * function(layers[layer - 1]->neurons)[prevNeuron];
                 error += delta[neuron] * layers[layer]->weights[neuron][prevNeuron];
             }
-            newDelta[prevNeuron] = error * derivativeActivationFunctionMap[layers[layer - 1]->activationFunction](layers[layer - 1]->neurons)[prevNeuron];
+            newDelta[prevNeuron] = error * function(layers[layer - 1]->neurons)[prevNeuron];
         }
         delta = newDelta;
         for (size_t neuron = 0; neuron < layers[layer]->neurons.size(); neuron++)
@@ -216,7 +217,7 @@ float Network::calculateBinaryCrossEntropy(vector<float> &output, string label) 
         }
     }
     float probability = clamp(output[labelIndex], 0.0001f, 0.9999f);
-    float falseProbability = clamp(output[index], 0.0001f, 0.9999f);
+    float falseProbability = 1 - probability;
     float loss = -(log(probability) * 1.0f + log(falseProbability) * 0.0f);
     return loss;
 }

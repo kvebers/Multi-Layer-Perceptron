@@ -135,9 +135,12 @@ void training(vector<pair<string, std::vector<float>>> trainingData, vector<pair
     network.CheckValidNetwork();
     network.initializeNeuralNetworkWeights();
     network.initializeLabels(trainingData);
-    (void) learningRate;
+    float earlyStopping = 0.88;
+    ofstream training("./visuals/training.csv");
+    training << "Epoch,Loss,Accuracy,Test Accuracy"<< endl;
     for (size_t trainingCount = 0; trainingCount < epochs; trainingCount++)
     {
+        
         float deltaError = 0.0;
         float correct = 0;
         random_device rd;
@@ -163,10 +166,10 @@ void training(vector<pair<string, std::vector<float>>> trainingData, vector<pair
             string prediction = network.extractPrediction(predictinFloats);
             if (prediction == testingData[i].first) correctTests++;
         }
-
         cout << "Ecoch: " <<trainingCount << " Loss: " << deltaError << " Accuracy: " << correct / trainingData.size() << " Test count: " <<correct << "/" << trainingData.size();
         cout << " Testing Data: " << correctTests / testingData.size() <<  " Test count: " << correctTests << "/" << testingData.size() << endl;
-        if (correctTests / testingData.size() > 0.90 && correct / trainingData.size() > 0.90) break;
+        training << trainingCount << "," << deltaError << "," << correct / trainingData.size() << "," << correctTests / testingData.size() << endl;
+        if (correctTests / testingData.size() > earlyStopping && correct / trainingData.size() > earlyStopping) break;
     }
-    (void) testingData;
+    training.close();
 }

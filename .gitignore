@@ -3,3 +3,4 @@ testing.csv
 training.csv
 *.o
 exec
+venv

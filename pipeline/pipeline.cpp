@@ -25,8 +25,8 @@ int main()
     network.addLayer("Hidden", 10, "sigmoid", "he");
     network.addLayer("Hidden", 10, "tanh", "he");
     network.addLayer("Output", identityLabels(trainingData), "softmax", "random");
-    // training
-    training(trainingData, testingData, network, 100, 0.01);
+    // training 1000 epochs with learning rate 0.0001
+    training(trainingData, testingData, network, 1000, 0.0001);
     
     // testing
     // predict();
