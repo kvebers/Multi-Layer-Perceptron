@@ -50,7 +50,6 @@ void Network::importWeights(const string &file)
                 layers[layer]->bias[neuron] = neuronValue;
                 for (size_t weight = 0; weight < layers[layer]->weights[neuron].size(); weight++)
                 {
-					cout << "Layer: " << layer << " Neuron: " << neuron << " Weight: " << weight << endl;
                     if (!(input >> neuronValue)) { cerr << "Error reading weight value " <<endl; exit(1);}
                     layers[layer]->weights[neuron][weight] = neuronValue;
                 }
