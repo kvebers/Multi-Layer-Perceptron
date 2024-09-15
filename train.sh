@@ -4,7 +4,7 @@ if [ ! -f "exec" ]; then
     make
 fi
 
-./exec pre pre pre
+./exec asd pre asd
 if (( $? != 0 )); then
     exit 1
 fi
