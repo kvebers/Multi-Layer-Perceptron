@@ -85,6 +85,7 @@ class Network
         void initializeNeuralNetworkWeights();
         void importNetwork(const string &file, vector<pair<string, std::vector<float>>> &trainingData, vector<size_t> &params);
         void exportNetwork(const string &file);
+        void importWeights(const string &file);
         void initializeLabels(vector<pair<string, std::vector<float>>> &data);
         string extractPrediction(vector<float> &output);
         float calculateBinaryCrossEntropy(vector<float> &output, string label);

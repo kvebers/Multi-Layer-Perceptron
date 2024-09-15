@@ -35,6 +35,33 @@ Network::~Network()
 {
 }
 
+void Network::importWeights(const string &file)
+{
+	ifstream input(file);
+	if (!input.is_open()){cerr << "Error opening input file" << endl; exit(1);}
+	for (size_t layer = 1; layer < layers.size(); layer++)
+	{
+		for (size_t neuron = 0; neuron < layers[layer]->neurons.size(); neuron++)
+		{
+			try
+			{
+				float neuronValue;
+				input >> neuronValue;
+				layers[layer]->neurons[neuron] = neuronValue;
+				for (size_t weight = 0; weight < layers[layer]->weights[neuron].size(); weight++)
+				{
+					input >> neuronValue;
+					layers[layer]->weights[neuron][weight] = neuronValue;
+				}
+			} catch (const std::exception &e) {
+				cerr << e.what() << endl;
+				exit(1);
+			}
+		}
+	}
+	input.close();
+}
+
 
 void Network::importNetwork(const string &file, vector<pair<string, std::vector<float>>> &trainingData, vector<size_t> &params)
 {
@@ -68,7 +95,18 @@ void Network::importNetwork(const string &file, vector<pair<string, std::vector<
 
 void Network::exportNetwork(const string &file)
 {
-	(void) file;
+	ofstream output(file);
+	if (!output.is_open()){cerr << "Error opening output file" << endl; exit(1);}
+	for (size_t layer = 1; layer < layers.size(); layer++)
+	{
+		for (size_t neuron = 0; neuron < layers[layer]->neurons.size(); neuron++)
+		{
+			output << layers[layer]->neurons[neuron] << endl;
+			for (size_t weight = 0; weight < layers[layer]->weights[neuron].size(); weight++)
+				output << layers[layer]->weights[neuron][weight] << endl;
+		}
+	}
+	output.close();
 }
 
 void Network::addLayer(string layerName, size_t size, string activationFunction, string weightInitialization)
@@ -221,6 +259,7 @@ string Network::extractPrediction(vector<float> &output)
 	float max = output[index];
 	for (size_t i = 1; i < output.size(); i++)
 		if (output[i] > max) {max = output[i]; index = i;}
+	if (index >= labels.size()) {cerr << "Invalid Index" << endl; exit(1);}
 	return labels[index];
 }
 
