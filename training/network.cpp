@@ -56,7 +56,7 @@ void Network::importNetwork(const string &file, vector<pair<string, std::vector<
 				pos = nextPos + 1;
 			}
 			if (values.size() != 4) {cerr << "Invalid Network File" << endl; exit(1);}
-			if (values[0] == "Input") addLayer(values[0], params.size(), values[2], values[3]);
+			if (values[0] == "Input") addLayer(values[0], params.size(), "relu", "zeros");
 			else if (values[0] == "Hidden") addLayer(values[0], stoi(values[1]), values[2], values[3]);
 			else if (values[0] == "Output") addLayer(values[0], identityLabels(trainingData), values[2], values[3]);
 			else {cerr << "Invalid Layer Name" << endl; exit(1);}
