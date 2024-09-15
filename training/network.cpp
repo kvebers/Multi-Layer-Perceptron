@@ -37,30 +37,30 @@ Network::~Network()
 
 void Network::importWeights(const string &file)
 {
-	ifstream input(file);
-	if (!input.is_open()){cerr << "Error opening input file" << endl; exit(1);}
-	for (size_t layer = 1; layer < layers.size(); layer++)
-	{
-		for (size_t neuron = 0; neuron < layers[layer]->neurons.size(); neuron++)
-		{
-			try
-			{
-				float neuronValue;
-				input >> neuronValue;
-				layers[layer]->neurons[neuron] = neuronValue;
-				for (size_t weight = 0; weight < layers[layer]->weights[neuron].size(); weight++)
-				{
-					input >> neuronValue;
-					layers[layer]->weights[neuron][weight] = neuronValue;
-				}
-			} catch (const std::exception &e) {
-				cerr << e.what() << endl;
-				exit(1);
-			}
-		}
-	}
-	input.close();
+    ifstream input(file);
+    if (!input.is_open()) { cerr << "Error opening input file" << endl; exit(1); }
+    for (size_t layer = 1; layer < layers.size(); layer++)
+    {
+        for (size_t neuron = 0; neuron < layers[layer]->neurons.size(); neuron++)
+        {
+            try
+            {
+                float neuronValue;
+                if (!(input >> neuronValue)) { cerr << "Error reading bias value" << endl; exit(1); }
+                layers[layer]->bias[neuron] = neuronValue;
+                for (size_t weight = 0; weight < layers[layer]->weights[neuron].size(); weight++)
+                {
+					cout << "Layer: " << layer << " Neuron: " << neuron << " Weight: " << weight << endl;
+                    if (!(input >> neuronValue)) { cerr << "Error reading weight value " <<endl; exit(1);}
+                    layers[layer]->weights[neuron][weight] = neuronValue;
+                }
+            }
+            catch (const std::exception &e) {cerr << e.what() << endl; exit(1);}
+        }
+    }
+    input.close();
 }
+
 
 
 void Network::importNetwork(const string &file, vector<pair<string, std::vector<float>>> &trainingData, vector<size_t> &params)
@@ -90,7 +90,6 @@ void Network::importNetwork(const string &file, vector<pair<string, std::vector<
         }
     }
     catch (const std::exception &e){ cerr << e.what() << endl;exit(1);}
-
 }
 
 void Network::exportNetwork(const string &file)
@@ -101,9 +100,12 @@ void Network::exportNetwork(const string &file)
 	{
 		for (size_t neuron = 0; neuron < layers[layer]->neurons.size(); neuron++)
 		{
-			output << layers[layer]->neurons[neuron] << endl;
+			output << layers[layer]->bias[neuron] << endl;
 			for (size_t weight = 0; weight < layers[layer]->weights[neuron].size(); weight++)
-				output << layers[layer]->weights[neuron][weight] << endl;
+			{
+				if (layer == layers.size() - 1 && neuron == layers[layer]->neurons.size() - 1 && weight == layers[layer]->weights[neuron].size() - 1) output << layers[layer]->weights[neuron][weight];
+				else output << layers[layer]->weights[neuron][weight] << endl;
+			}
 		}
 	}
 	output.close();
@@ -112,13 +114,8 @@ void Network::exportNetwork(const string &file)
 void Network::addLayer(string layerName, size_t size, string activationFunction, string weightInitialization)
 {
 	if (size < 1 || activationFunction == "" || weightInitialization == "" || size > 200) {cerr << "Invalid Layer Parameters" << endl; exit(1);}
-	if (layerName == "Input" || layerName == "Hidden" || layerName == "Output")
-        layers.push_back(std::make_unique<Layer>(layerName, size, activationFunction, weightInitialization));
-	else
-	{
-		cerr << "Invalid Layer Name" << endl;
-		exit(1);
-	}
+	if (layerName == "Input" || layerName == "Hidden" || layerName == "Output") layers.push_back(std::make_unique<Layer>(layerName, size, activationFunction, weightInitialization));
+	else {cerr << "Invalid Layer Name" << endl; exit(1); }
 }
 
 
