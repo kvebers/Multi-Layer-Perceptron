@@ -4,7 +4,7 @@ int main()
 {
     // data preprocessing
     size_t seed = 2002;
-    string input_file = "data.csv";
+    string input_file = "data_normalized.csv";
     string trainingFile = "training.csv";
     string testingFile = "testing.csv";
     vector<size_t> params;
@@ -22,8 +22,8 @@ int main()
     // create network
     Network network;
     network.addLayer("Input", params.size(), "relu", "zeros");
-    network.addLayer("Hidden", 24, "sigmoid", "he");
-    network.addLayer("Hidden", 4, "tanh", "he");
+    network.addLayer("Hidden", 10, "sigmoid", "he");
+    network.addLayer("Hidden", 10, "tanh", "he");
     network.addLayer("Output", identityLabels(trainingData), "softmax", "random");
     // training 1000 epochs with learning rate 0.0001
     training(trainingData, testingData, network, 100, 0.01);

@@ -114,52 +114,44 @@ vector<float> Network::createTargetVector(string &label)
 
 void Network::applyGradients(float &learningRate)
 {
-	float clip = 1.0;
-    for (size_t layer = 1; layer < layers.size(); layer++) {
-        for (size_t neuron = 0; neuron < layers[layer]->neurons.size(); neuron++) {
-            float gradientNorm = 0.0;
-            for (size_t weight = 0; weight < layers[layer - 1]->size; weight++)
-                gradientNorm += layers[layer]->gradientWeights[neuron][weight] * layers[layer]->gradientWeights[neuron][weight];
-            gradientNorm = sqrt(gradientNorm);
-            if (gradientNorm > clip) {
-                for (size_t weight = 0; weight < layers[layer - 1]->size; weight++) {
-					if (gradientNorm < 0.0) gradientNorm = 0.0001;
-                    layers[layer]->gradientWeights[neuron][weight] *= clip / gradientNorm;
-                    if (layers[layer]->gradientWeights[neuron][weight] * layers[layer]->gradientWeights[neuron][weight] < 0)
-                        layers[layer]->gradientWeights[neuron][weight] *= -1;
-                }
-            }
-            for (size_t weight = 0; weight < layers[layer - 1]->size; weight++) {
-                layers[layer]->weights[neuron][weight] -= layers[layer]->gradientWeights[neuron][weight] * learningRate;
-                layers[layer]->gradientWeights[neuron][weight] = 0.0;
-            }
-            layers[layer]->bias[neuron] -= layers[layer]->gradientNeuronBias[neuron] * learningRate;
-            layers[layer]->gradientNeuronBias[neuron] = 0.0;
-        }
-    }
+	for (size_t layer = 1; layer < layers.size(); layer++)
+	{
+		for (size_t neuron = 0; neuron < layers[layer]->neurons.size(); neuron++)
+		{
+			for (size_t weight = 0; weight < layers[layer - 1]->size;  weight++)
+			{
+				float weightGradientChange = layers[layer]->gradientWeights[neuron][weight] * learningRate;
+				layers[layer]->weights[neuron][weight] -= weightGradientChange;
+				layers[layer]->gradientWeights[neuron][weight] = 0.0;
+			}
+			layers[layer]->bias[neuron] -= layers[layer]->gradientNeuronBias[neuron] * learningRate;
+			layers[layer]->gradientNeuronBias[neuron] = 0.0;
+		}
+	}
 }
 
-
 void Network::backpropagation(vector<float> &output, vector<float> &target) {
+	DerivativeActivationFunctionPointer function = derivativeActivationFunctionMap[layers.back()->activationFunction];
+	vector<float> outputDerivative = function(layers.back()->neurons);
     vector<float> delta(layers.back()->neurons.size());
     for (size_t i = 0; i < layers.back()->neurons.size(); i++)
         delta[i] = output[i] - target[i];
     for (size_t layer = layers.size() - 1; layer > 0; layer--) {
         vector<float> newDelta(layers[layer - 1]->neurons.size());
+		function = derivativeActivationFunctionMap[layers[layer - 1]->activationFunction];
         for (size_t prevNeuron = 0; prevNeuron < layers[layer - 1]->neurons.size(); prevNeuron++) {
             float error = 0.0;
-			DerivativeActivationFunctionPointer function = derivativeActivationFunctionMap[layers[layer - 1]->activationFunction];
 			vector<float> temp = function(layers[layer - 1]->neurons);
             for (size_t neuron = 0; neuron < layers[layer]->neurons.size(); neuron++) {
-            	float weightGradient = delta[neuron] * layers[layer - 1]->neurons[prevNeuron];
-                layers[layer]->gradientWeights[neuron][prevNeuron] += weightGradient * temp[prevNeuron];
-                error += delta[neuron] * layers[layer]->weights[neuron][prevNeuron];
+        		float weightGradient = delta[neuron] * layers[layer - 1]->neurons[prevNeuron];
+        		layers[layer]->gradientWeights[neuron][prevNeuron] += weightGradient;
+        		error += delta[neuron] * layers[layer]->weights[neuron][prevNeuron];
             }
             newDelta[prevNeuron] = error * temp[prevNeuron];
         }
-        delta = newDelta;
         for (size_t neuron = 0; neuron < layers[layer]->neurons.size(); neuron++)
             layers[layer]->gradientNeuronBias[neuron] += delta[neuron];
+        delta = newDelta;
     }
 }
 
