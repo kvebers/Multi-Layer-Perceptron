@@ -1,0 +1,4 @@
+Input,params.size(),relu,zeros
+Hidden,4,sigmoid,zeros
+Hidden,2,tanh,he
+Output,identityLabels(trainingData),softmax,random

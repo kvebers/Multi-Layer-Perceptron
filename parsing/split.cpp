@@ -4,11 +4,7 @@ vector<pair<string, std::vector<float>>> splitDataInVectors(const string &file, 
 {
     ifstream input(file);
     vector<pair<string, std::vector<float>>> data;
-    if (!input.is_open())
-    {
-        cerr << "Error opening input file" << endl;
-        return data;
-    }
+    if (!input.is_open()) { cerr << "Error opening input file" << endl; return data;}
     try
     {
         for (string line; getline(input, line);)
@@ -32,11 +28,7 @@ vector<pair<string, std::vector<float>>> splitDataInVectors(const string &file, 
         }
         return data;
     }
-    catch (const std::exception &e)
-    {
-        cerr << e.what() << endl;
-        exit(1);
-    }
+    catch (const std::exception &e){cerr << e.what() << endl; exit(1);}
 }
 
 
@@ -45,11 +37,7 @@ void splitDataFiles(const string &inputFile, const string &trainingFile, const s
     ifstream input(inputFile);
     ofstream training(trainingFile);
     ofstream testing(testingFile);
-    if (!input.is_open())
-    {
-        cerr << "Error opening input file" << endl;
-        return;
-    }
+    if (!input.is_open()){cerr << "Error opening input file" << endl; exit(1);}
     srand(seed);
     for (string line; getline(input, line);)
     {

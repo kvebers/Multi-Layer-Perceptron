@@ -83,7 +83,7 @@ class Network
         vector<string> labels;
         vector<float> predict(pair<string, std::vector<float>> &input);
         void initializeNeuralNetworkWeights();
-        void importNetwork(const string &file);
+        void importNetwork(const string &file, vector<pair<string, std::vector<float>>> &trainingData, vector<size_t> &params);
         void exportNetwork(const string &file);
         void initializeLabels(vector<pair<string, std::vector<float>>> &data);
         string extractPrediction(vector<float> &output);

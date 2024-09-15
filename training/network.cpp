@@ -36,9 +36,34 @@ Network::~Network()
 }
 
 
-void Network::importNetwork(const string &file)
+void Network::importNetwork(const string &file, vector<pair<string, std::vector<float>>> &trainingData, vector<size_t> &params)
 {
-	(void) file;
+	ifstream input(file);
+	if (!input.is_open()){cerr << "Error opening input file" << endl; exit(1);}
+	    try
+    {
+        for (string line; getline(input, line);)
+        {
+			vector<string> values;
+			size_t pos = 0;
+			values.reserve(4);
+			while (pos < line.size())
+			{
+				size_t nextPos = line.find(',', pos);
+				if (nextPos == string::npos) nextPos = line.size();
+				string value = line.substr(pos, nextPos - pos);
+				values.push_back(value);
+				pos = nextPos + 1;
+			}
+			if (values.size() != 4) {cerr << "Invalid Network File" << endl; exit(1);}
+			if (values[0] == "Input") addLayer(values[0], params.size(), values[2], values[3]);
+			else if (values[0] == "Hidden") addLayer(values[0], stoi(values[1]), values[2], values[3]);
+			else if (values[0] == "Output") addLayer(values[0], identityLabels(trainingData), values[2], values[3]);
+			else {cerr << "Invalid Layer Name" << endl; exit(1);}
+        }
+    }
+    catch (const std::exception &e){ cerr << e.what() << endl;exit(1);}
+
 }
 
 void Network::exportNetwork(const string &file)
@@ -48,6 +73,7 @@ void Network::exportNetwork(const string &file)
 
 void Network::addLayer(string layerName, size_t size, string activationFunction, string weightInitialization)
 {
+	if (size < 1 || activationFunction == "" || weightInitialization == "" || size > 200) {cerr << "Invalid Layer Parameters" << endl; exit(1);}
 	if (layerName == "Input" || layerName == "Hidden" || layerName == "Output")
         layers.push_back(std::make_unique<Layer>(layerName, size, activationFunction, weightInitialization));
 	else
@@ -144,7 +170,7 @@ void Network::backpropagation(vector<float> &output, vector<float> &target) {
 			vector<float> temp = function(layers[layer - 1]->neurons);
             for (size_t neuron = 0; neuron < layers[layer]->neurons.size(); neuron++) {
         		float weightGradient = delta[neuron] * layers[layer - 1]->neurons[prevNeuron];
-        		layers[layer]->gradientWeights[neuron][prevNeuron] += weightGradient;
+        		layers[layer]->gradientWeights[neuron][prevNeuron] += weightGradient * temp[prevNeuron];
         		error += delta[neuron] * layers[layer]->weights[neuron][prevNeuron];
             }
             newDelta[prevNeuron] = error * temp[prevNeuron];
